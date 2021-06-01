@@ -20,10 +20,10 @@ get_all_paths <- function(g){
 #' @param weight The weight to calculate the shortests paths, can be 'weight' or 'distance' (default = weight)
 #' @return list of lists containing the top best n paths and its tota weight.
 #' 
-best_n_paths <- function(graph, from, to, n, weight='weight'){
+best_paths <- function(graph, from, to, weight='weight'){
   all_paths <- all_simple_paths(g, from=from, to=to)
   
-  top_n <- list()
+  ordered_paths <- list()
   
   for (path in all_paths){
     if(weight == "distance"){
@@ -35,19 +35,19 @@ best_n_paths <- function(graph, from, to, n, weight='weight'){
     else{
       weight_sum <- sum(E(g, path = unlist(path))$all)
     }
-    
-    if(length(top_n) < n){
-      top_n[[length(top_n)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
-    }
-    else{
-      top_n <- top_n[order(sapply(top_n,'[[',1))]
+    ordered_paths[[length(ordered_paths)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
+    #if(length(top_n) < n){
+    #  top_n[[length(top_n)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
+    #}
+    #else{
+    #  top_n <- top_n[order(sapply(top_n,'[[',1))]
       
-      if(weight_sum < top_n[[1]]$weight){
-        top_n[[1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
-      }
-    }
+    #  if(weight_sum < top_n[[1]]$weight){
+    #    top_n[[1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
+    #  }
+    #}
   }
-  return(top_n)
+  return(ordered_paths[order(sapply(ordered_paths,'[[',1))])
 }
 
 

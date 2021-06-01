@@ -71,7 +71,23 @@ segments_df <- data.frame(from = weighted_segments$from,
                           distance = weighted_segments$distance,
                           all = weighted_segments$all)
 
-g <- graph_from_data_frame(segments_df, directed=FALSE)
+# g <- graph_from_data_frame(segments_df, directed=FALSE) # Not working properly
+
+
+#----------------------------------------CREATE GRAPH----------------------------------------
+
+g <- graph_from_adjacency_matrix(LN_vertex$m, mode = "undirected")
+# Add vertices coordinates
+g <- g %>% set_vertex_attr(name = "V1", value = Dades_vertex$V1) %>% 
+           set_vertex_attr(name = "V2", value = Dades_vertex$V2)
+# Add edge weights
+g <- g %>% set_edge_attr(name = "weight", value = weighted_segments$weight) %>% 
+           set_edge_attr(name = "distance", value = weighted_segments$distance) %>% 
+           set_edge_attr(name = "all", value = weighted_segments$all)
+
+
+#--------------------------------------------------------------------------------------------
+
 E(g)$weight # Check weight
 E(g)$distance # Check distance
 
@@ -79,19 +95,46 @@ g_df = as_data_frame(g)
 
 #plot(g, vertex.label=NA, vertex.size=2, window=TRUE, axes=TRUE, edge.label = edge_attr(g)$weight, edge.label.cex = 0.5)
 plot(g, vertex.label=NA, vertex.size=2, edge.label = edge_attr(g)$weight, edge.label.cex = 0.5) # Plot with weights
+plot(g, vertex.size=2) # Plot node labels
+
 
 # Get a matrix with the weights of the shortest paths
 shortest_weight   <-  shortest.paths(g, v=V(g), weights=E(g)$weight)
 shortest_distance <-  shortest.paths(g, v=V(g), weights=E(g)$distance)
 
 
+# ---------------------PLOT GRAPH--------------------------
 
+mm = matrix(cbind(vertex_attr(g)$V1, vertex_attr(g)$V2), ncol=2)
+plot(g, layout = mm, vertex.size=2, window=TRUE, axes=TRUE, 
+     xlim=c(270000, 320000),ylim=c(4590000,4620000), rescale=F)
 
-top_shortest_paths <- best_n_paths(g, "1", "15", 10, "distance")
+# -----------------Village node index----------------------
+seros = "2"
+torres = "16"
+albatarrec = "22"
+cogul = "31"
+artesa = "32"
+castelldans = "34"
+albages = "36"
+juneda = "44"
+alamus = "52"
+belloc = "54"
+vilanova = "60"
+menarguens = "66"
+benavent = "68"
+almacelles = "77"
+lleida = "88"
+#----------------------------------------------------------
 
-top_safer_paths <- best_n_paths(g, "1", "15", 10)
+all_shortest_paths <- best_paths(graph = g, from = almacelles, to = albages, weight = "distance")
+top_shortest_paths <- all_shortest_paths[1:10]
 
-top_paths <- best_n_paths(g, "1", "15", 10, "all")
+all_safest_paths <- best_paths(graph = g, from = almacelles, to = albages, weight = "weight")
+top_safest_paths <- all_safest_paths[1:10]
+
+best_paths <- best_paths(graph = g, from = "1", to = "15", weight = "all")
+top_paths <- best_paths[1:10]
 
 print_path(ppp_vertex, top_shortest_paths[[1]]$path)
 
