@@ -138,6 +138,8 @@ top_paths <- best_paths[1:10]
 
 print_path(ppp_vertex, top_shortest_paths[[1]]$path)
 
+infopaths <- paths_info(graph = g, from = almacelles, to = albages)
+test <- rate_paths(graph = g, from = almacelles, to = albages)
 
 
 

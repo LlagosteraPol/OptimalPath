@@ -10,6 +10,54 @@ get_all_paths <- function(g){
   return(indirect)
 }
 
+paths_info <- function(graph, from, to){
+  all_paths <- all_simple_paths(g, from=from, to=to)
+  
+  ipaths <- list()
+  
+  for (path in all_paths){
+    
+    distance_sum <- sum(E(g, path = unlist(path))$distance)
+
+    weight_sum <- sum(E(g, path = unlist(path))$weight)
+
+    ipaths[[length(ipaths)+1]] <- list(from = from, to=to, path = as.numeric(unlist(as_ids(path))), distance = distance_sum, weight = weight_sum)
+  }
+  return(ipaths)
+}
+
+weight_order <- function(graph, from, to, type){
+  ipaths <- paths_info(graph = graph, from = from, to=to)
+  if(type == "distance"){
+    return(ipaths[order(sapply(ipaths,'[[',4))])
+  }
+  else if (type == "weight"){
+    return(ipaths[order(sapply(ipaths,'[[',5))])
+  }
+
+  return(ipaths)
+}
+
+rate_paths <- function(graph, from, to){
+  ipaths <- paths_info(graph = graph, from = from, to=to)
+  #distance_order <- weight_order(graph = graph, from = from, to=to, type="distance")
+  #weight_order <-  weight_order(graph = graph, from = from, to=to, type="weight")
+  # distance order
+  ipaths <- ipaths[order(sapply(ipaths,'[[',4))]
+  
+  for(i in 1:length(ipaths)){
+    ipaths[[i]] <- append(ipaths[[i]], list(n_distance=i))
+  }
+  
+  #accident intensity order
+  ipaths <- ipaths[order(sapply(ipaths,'[[',5))]
+  for(i in 1:length(ipaths)){
+    ipaths[[i]] <- append(ipaths[[i]], list(n_weight=i))
+  }
+  
+  return(ipaths)
+}
+
 #' Get the shortest n paths between two nodes (depending on weight).
 #' 
 #' @name best_n_paths
