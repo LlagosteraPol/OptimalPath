@@ -38,11 +38,29 @@ ppp_vertex<-ppp(xvt,yvt,window=wind)
 from1<-Dades_segments$V1 #son els from (index del vertex de sortida del segment)
 to1<-Dades_segments$V2 #son els to (index del vertex de arribada del segment)
 edgs<-cbind(from1,to1)
+
+
 #crea el linnet
 LN_vertex<- linnet(ppp_vertex, edges=edgs)
 plot(LN_vertex,main="")
 points(ACC_win$x,ACC_win$y,pch=20,col=rgb(0,0,0,alpha=0.4),cex=1.2) # Accidents
 #points(ppp_vertex,pch=19,col="black")
+
+##Passar de class linnet to class psp
+pv.map.psp<-as.psp(LN_vertex)
+is.psp(pv.map.psp)
+Acc_LN<-project2segment(ACC_win, pv.map.psp)
+
+plot(Acc_LN$Xproj)
+
+##The output ppp object is
+Acc_LN$Xproj
+
+##Ara ja pots generar el objecte que contingui el point pattern i les carreteres
+LN_pp<-lpp(Acc_LN$Xproj,LN_vertex)
+plot(LN_pp)
+
+
 
 
 #si necessites la matriu d'adjacencies només et cal fer
@@ -86,7 +104,7 @@ g <- g %>% set_edge_attr(name = "weight", value = weighted_segments$weight) %>%
            set_edge_attr(name = "all", value = weighted_segments$all)
 
 
-#--------------------------------------------------------------------------------------------
+#-----------------------------------------TEST-------------------------------------------------
 
 E(g)$weight # Check weight
 E(g)$distance # Check distance
@@ -139,8 +157,8 @@ top_paths <- best_paths[1:10]
 print_path(ppp_vertex, top_shortest_paths[[1]]$path)
 
 infopaths <- paths_info(graph = g, from = almacelles, to = albages)
-test <- rate_paths(graph = g, from = almacelles, to = albages)
-
+rated <- rate_paths(graph = g, from = almacelles, to = albages)
+rated <- rated[order(sapply(rated,'[[',7))]
 
 
 
