@@ -6,6 +6,9 @@ library(sp)
 library(maptools)
 
 getwd()
+# Read R database code
+load(file="DB/RData/Linear_pixel_final_4_Juny_2021_ultima_copia.RData")
+
 ## Lectura dels shapefiles
 pv.spain<-readOGR("DB/SHP/Spain_3.shp")
 pv.map<-readOGR("DB/SHP/Carret_IMD2015_CatPenins.shp")
@@ -100,33 +103,67 @@ points(ACC$V1,ACC$V2,pch=20,col=rgb(0,0,0,alpha=alpha1),cex=cex_point) # Punts C
 #mtext("Sitges", at=xmin+145000, line = -13.10, cex=1.4)
 
 ##Aquí has d'afeguir un rectangle/quadrat al voltant de Lleida (la nostra àrea d'observació, amb un marc negre) per deixar clar quina és l'àrea de treball que apareixerà en la següent finesta (plot(LNnew, etc...)
-rect(xmin_lld, ymin_lld, xmax_lld, ymax_lld, border="red",lwd=2) # Quadre Lleida
+rect(xmin_lld, ymin_lld, xmax_lld, ymax_lld, border="black",lwd=2) # Quadre Lleida
+
+#L'objected lpp (network més point pattern) és l'objecte LN_pp
+plot(LN_pp,axes=FALSE, main="")
+
 propx = round((xmin_lld - xmin_cat) / 1000) # Proporciò referent a Catalunya en km arrodonit (per l'eix x dels labels)
 propy = round((ymin_lld - ymin_cat) / 1000) # Igual pro per l'eix y dels labels
 gap = 10
-  
+
 par(mar =0.2+c(3.2, 1.5, 2.2, 2))
-plot(LNnew, main="",axes=FALSE,col="grey")
-axis(1, at=c(xmin_lld, 
+#plot(LNnew, main="",axes=FALSE,col="grey")
+axis(1, at=c(xmin_lld,
              xmin_lld + (xmax_lld-xmin_lld)/5,
              xmin_lld + 2*(xmax_lld-xmin_lld)/5,
              xmin_lld + 3*(xmax_lld-xmin_lld)/5,
-             xmin_lld + 4*(xmax_lld-xmin_lld)/5, 
-             xmax_lld), 
-    labels = c(propx,propx+(gap*1),propx+(gap*2),propx+(gap*3),propx+(gap*4),propx+(gap*5)),
-    pos=c(ymin_lld, xmin_lld),cex.axis=1.40, mgp=c(0, 0.7, 0))
+             xmin_lld + 4*(xmax_lld-xmin_lld)/5,
+             xmax_lld),
+     labels = c(propx,propx+(gap*1),propx+(gap*2),propx+(gap*3),propx+(gap*4),propx+(gap*5)),
+     pos=c(ymin_lld, xmin_lld),cex.axis=1.40, mgp=c(0, 0.7, 0))
 
-axis(2, at=c(ymin_lld, 
+axis(2, at=c(ymin_lld,
              ymin_lld + (ymax_lld-ymin_lld)/5,
              ymin_lld + 2*(ymax_lld-ymin_lld)/5,
              ymin_lld + 3*(ymax_lld-ymin_lld)/5,
-             ymin_lld + 4*(ymax_lld-ymin_lld)/5, 
-             ymax_lld), 
+             ymin_lld + 4*(ymax_lld-ymin_lld)/5,
+             ymax_lld),
     labels = c(propy,propy+(gap*1),propy+(gap*2),propy+(gap*3),propy+(gap*4),propy+(gap*5)),
     pos=c(xmin_lld, ymin_lld),cex.axis=1.40, mgp=c(0, 0.7, 0),las=2)
 rect(xmin_lld,ymin_lld,xmax_lld,ymax_lld,border="black",lwd=2)
-points(ACC_win$x,ACC_win$y,pch=20,col=rgb(0,0,0,alpha=alpha1),cex=1.2)
-
 
 dev.off()
+
+
+#---------------------------------Old code to plot Lleida-------------------------------
+
+# propx = round((xmin_lld - xmin_cat) / 1000) # Proporciò referent a Catalunya en km arrodonit (per l'eix x dels labels)
+# propy = round((ymin_lld - ymin_cat) / 1000) # Igual pro per l'eix y dels labels
+# gap = 10
+# 
+# par(mar =0.2+c(3.2, 1.5, 2.2, 2))
+# plot(LNnew, main="",axes=FALSE,col="grey")
+# axis(1, at=c(xmin_lld,
+#              xmin_lld + (xmax_lld-xmin_lld)/5,
+#              xmin_lld + 2*(xmax_lld-xmin_lld)/5,
+#              xmin_lld + 3*(xmax_lld-xmin_lld)/5,
+#              xmin_lld + 4*(xmax_lld-xmin_lld)/5,
+#              xmax_lld),
+#     labels = c(propx,propx+(gap*1),propx+(gap*2),propx+(gap*3),propx+(gap*4),propx+(gap*5)),
+#     pos=c(ymin_lld, xmin_lld),cex.axis=1.40, mgp=c(0, 0.7, 0))
+# 
+# axis(2, at=c(ymin_lld, 
+#              ymin_lld + (ymax_lld-ymin_lld)/5,
+#              ymin_lld + 2*(ymax_lld-ymin_lld)/5,
+#              ymin_lld + 3*(ymax_lld-ymin_lld)/5,
+#              ymin_lld + 4*(ymax_lld-ymin_lld)/5, 
+#              ymax_lld), 
+#     labels = c(propy,propy+(gap*1),propy+(gap*2),propy+(gap*3),propy+(gap*4),propy+(gap*5)),
+#     pos=c(xmin_lld, ymin_lld),cex.axis=1.40, mgp=c(0, 0.7, 0),las=2)
+# rect(xmin_lld,ymin_lld,xmax_lld,ymax_lld,border="black",lwd=2)
+# points(ACC_win$x,ACC_win$y,pch=20,col=rgb(0,0,0,alpha=alpha1),cex=1.2)
+
+
+
 

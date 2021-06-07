@@ -10,9 +10,12 @@ library(spatstat)
 
 
 #Importa dades
+#Dades_vertex<-read.table("DB/Data/Dades_vertex_4_juny.data",header=FALSE)
+#Dades_segments<-read.table("DB/Data/Dades_segments_4_juny.data",header=FALSE)
+#Dades_pesos<-read.table("DB/Data/Dades_pesos_750_4_juny.data",header=FALSE)
 Dades_vertex<-read.table("DB/Data/Dades_vertex.data",header=FALSE)
 Dades_segments<-read.table("DB/Data/Dades_segments.data",header=FALSE)
-Dades_pesos<-read.table("DB/Data/Dades_pesos.data",header=FALSE)
+Dades_pesos<-read.table("DB/Data/Dades_pesos_750.data",header=FALSE)
 Dades_distancies<-read.table("DB/Data/Dades_Dist_creua.data",header=FALSE)
 ACC<-read.table("DB/Data/Projected_Accidents_Cat.data", header=F) ## Lectura dels accidents
 
@@ -42,26 +45,33 @@ edgs<-cbind(from1,to1)
 
 #crea el linnet
 LN_vertex<- linnet(ppp_vertex, edges=edgs)
-plot(LN_vertex,main="")
-points(ACC_win$x,ACC_win$y,pch=20,col=rgb(0,0,0,alpha=0.4),cex=1.2) # Accidents
-#points(ppp_vertex,pch=19,col="black")
 
+#--------------------------------------------PLOTS----------------------------------------------
+pdf("Images/Figure2.pdf",height=6,width=13.5)
+layout(matrix(c(1,2),1,2,byrow=TRUE))
+
+#--------------------------------------Plot map with nodes--------------------------------------
+plot(LN_vertex,main="")
+points(ppp_vertex,pch=19,col="black")
+
+
+#-------------------------------Plot map with projected accidents-------------------------------
 ##Passar de class linnet to class psp
 pv.map.psp<-as.psp(LN_vertex)
 is.psp(pv.map.psp)
-Acc_LN<-project2segment(ACC_win, pv.map.psp)
-
-plot(Acc_LN$Xproj)
+Acc_LN<-project2segment(ACC_win, pv.map.psp) # project accidents
+rect(minx,miny,maxx,maxy,border="black",lwd=2)
+#plot(Acc_LN$Xproj)
 
 ##The output ppp object is
 Acc_LN$Xproj
 
 ##Ara ja pots generar el objecte que contingui el point pattern i les carreteres
 LN_pp<-lpp(Acc_LN$Xproj,LN_vertex)
-plot(LN_pp)
-
-
-
+plot(LN_pp, main="")
+rect(minx,miny,maxx,maxy,border="black",lwd=2)
+dev.off()
+#----------------------------------------------------------------------------------------------
 
 #si necessites la matriu d'adjacencies només et cal fer
 Matriu_adja<-LN_vertex$m
@@ -70,7 +80,7 @@ Matriu_adja<-LN_vertex$m
 Pesos<-Dades_pesos$V1
 
 #per exemple, Pesos[1] és el pes de l'aresta 1 (amb el mateix ordre que estan en l'objecte LN_vertex)
-
+#----------------------------------------------------------------------------------------------
 
 # Add weights to the edges matrix
 weighted_segments <- cbind(Dades_segments, Dades_pesos) 
@@ -92,7 +102,7 @@ segments_df <- data.frame(from = weighted_segments$from,
 # g <- graph_from_data_frame(segments_df, directed=FALSE) # Not working properly
 
 
-#----------------------------------------CREATE GRAPH----------------------------------------
+#----------------------------------------CREATE GRAPH-----------------------------------------
 
 g <- graph_from_adjacency_matrix(LN_vertex$m, mode = "undirected")
 # Add vertices coordinates
@@ -105,27 +115,19 @@ g <- g %>% set_edge_attr(name = "weight", value = weighted_segments$weight) %>%
 
 
 #-----------------------------------------TEST-------------------------------------------------
-
-E(g)$weight # Check weight
-E(g)$distance # Check distance
-
-g_df = as_data_frame(g)
+# E(g)$weight # Check weight
+# E(g)$distance # Check distance
+# 
+# g_df = as_data_frame(g)
 
 #plot(g, vertex.label=NA, vertex.size=2, window=TRUE, axes=TRUE, edge.label = edge_attr(g)$weight, edge.label.cex = 0.5)
-plot(g, vertex.label=NA, vertex.size=2, edge.label = edge_attr(g)$weight, edge.label.cex = 0.5) # Plot with weights
-plot(g, vertex.size=2) # Plot node labels
+#plot(g, vertex.label=NA, vertex.size=2, edge.label = edge_attr(g)$weight, edge.label.cex = 0.5) # Plot with weights
+#plot(g, vertex.size=2) # Plot node labels
 
 
 # Get a matrix with the weights of the shortest paths
-shortest_weight   <-  shortest.paths(g, v=V(g), weights=E(g)$weight)
-shortest_distance <-  shortest.paths(g, v=V(g), weights=E(g)$distance)
-
-
-# ---------------------PLOT GRAPH--------------------------
-
-mm = matrix(cbind(vertex_attr(g)$V1, vertex_attr(g)$V2), ncol=2)
-plot(g, layout = mm, vertex.size=2, window=TRUE, axes=TRUE, 
-     xlim=c(270000, 320000),ylim=c(4590000,4620000), rescale=F)
+# shortest_weight   <-  shortest.paths(g, v=V(g), weights=E(g)$weight)
+# shortest_distance <-  shortest.paths(g, v=V(g), weights=E(g)$distance)
 
 # -----------------Village node index----------------------
 seros = "2"
@@ -138,27 +140,56 @@ albages = "36"
 juneda = "44"
 alamus = "52"
 belloc = "54"
-vilanova = "60"
+vilanova = "69"
 menarguens = "66"
 benavent = "68"
 almacelles = "77"
+alcarras = "82"
 lleida = "88"
+
+mtx = matrix(cbind(vertex_attr(g)$V1, vertex_attr(g)$V2), ncol=2)
+plot(g, layout = mtx,window=FALSE, axes=FALSE, vertex.size=1)
 #----------------------------------------------------------
 
-all_shortest_paths <- best_paths(graph = g, from = almacelles, to = albages, weight = "distance")
+all_shortest_paths <- best_paths(graph = g, from = vilanova, to = seros, weight = "distance")
 top_shortest_paths <- all_shortest_paths[1:10]
 
-all_safest_paths <- best_paths(graph = g, from = almacelles, to = albages, weight = "weight")
+all_safest_paths <- best_paths(graph = g, from = vilanova, to = seros, weight = "weight")
 top_safest_paths <- all_safest_paths[1:10]
 
-best_paths <- best_paths(graph = g, from = "1", to = "15", weight = "all")
-top_paths <- best_paths[1:10]
+best<- best_paths(graph = g, from = "1", to = "15", weight = "all")
+top_paths <- best[1:10]
 
-print_path(ppp_vertex, top_shortest_paths[[1]]$path)
 
+#----------------------------------PLOT FIGURE 3----------------------------------
+pdf("Images/Figure3.pdf",height=6,width=13.5)
+layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
+
+all_shortest_paths <- best_paths(graph = g, from = alcarras, to = albages, weight = "distance")
+print_path_graph(g, all_shortest_paths[[1]]$path)
+#all_shortest_paths <- best_paths(graph = g, from = 62, to = seros, weight = "distance")
+all_shortest_paths <- best_paths(graph = g, from = 48, to = seros, weight = "distance")
+print_path_graph(g, all_shortest_paths[[1]]$path)
+
+all_shortest_paths <- best_paths(graph = g, from = alcarras, to = albages, weight = "weight")
+print_path_graph(g, all_shortest_paths[[1]]$path)
+#all_shortest_paths <- best_paths(graph = g, from = 62, to = seros, weight = "weight")
+all_shortest_paths <- best_paths(graph = g, from = 48, to = seros, weight = "weight")
+print_path_graph(g, all_shortest_paths[[1]]$path)
+
+dev.off()
+
+
+#---------------------------------------------------------------------------------
 infopaths <- paths_info(graph = g, from = almacelles, to = albages)
 rated <- rate_paths(graph = g, from = almacelles, to = albages)
 rated <- rated[order(sapply(rated,'[[',7))]
+
+
+
+
+
+
 
 
 

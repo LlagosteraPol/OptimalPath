@@ -101,14 +101,37 @@ best_paths <- function(graph, from, to, weight='weight'){
 
 #' Print the map of the given ppp object with the given path as green nodes, it also print the other nodes as red
 #' 
-#' @name print_path
+#' @name print_path_ppp
 #' @param ppp_obj Point pattern object
 #' @param path Path to be plotted
 #' @return a plot of the map with the given path
 #' 
-print_path <- function(ppp_obj, path){
+print_path_ppp <- function(ppp_obj, path){
   ln_vertices<- linnet(ppp_obj, edges=edgs)
-  plot(ln_vertices)
+  plot(ln_vertices,col="blue")
   points(ppp_obj,pch=19,col="red")
   points(ppp_obj[path],pch=19,col="green")
+}
+
+#' Print the map of the given a 'igraph' object with the given path as green nodes
+#' as well as the edges
+#' 
+#' @name print_path_graph
+#' @param g 'igraph' Graph object
+#' @param path Path to be plotted
+#' @return a plot of the map with the given path
+#' 
+print_path_graph <- function(g, path){
+  vcol <- rep("black", vcount(g))
+  vcol[path] <- "green"
+  
+  ecol <- rep("black", ecount(g))
+  ecol[E(g, path=path)] <- "green"
+  
+  mtx = matrix(cbind(vertex_attr(g)$V1, vertex_attr(g)$V2), ncol=2)
+  plot(g, layout = mtx, 
+       vertex.size=3, vertex.color=vcol, vertex.label="",
+       edge.color=ecol,
+       window=FALSE, axes=FALSE)
+  box()
 }
