@@ -10,12 +10,14 @@ library(spatstat)
 
 
 #Importa dades
-#Dades_vertex<-read.table("DB/Data/Dades_vertex_4_juny.data",header=FALSE)
-#Dades_segments<-read.table("DB/Data/Dades_segments_4_juny.data",header=FALSE)
-#Dades_pesos<-read.table("DB/Data/Dades_pesos_750_4_juny.data",header=FALSE)
+Dades_vertex<-read.table("DB/Data/Dades_vertex_4_juny.data",header=FALSE)
+Dades_segments<-read.table("DB/Data/Dades_segments_4_juny.data",header=FALSE)
+Dades_pesos<-read.table("DB/Data/Dades_pesos_750_4_juny.data",header=FALSE)
+
 Dades_vertex<-read.table("DB/Data/Dades_vertex.data",header=FALSE)
 Dades_segments<-read.table("DB/Data/Dades_segments.data",header=FALSE)
 Dades_pesos<-read.table("DB/Data/Dades_pesos_750.data",header=FALSE)
+
 Dades_distancies<-read.table("DB/Data/Dades_Dist_creua.data",header=FALSE)
 ACC<-read.table("DB/Data/Projected_Accidents_Cat.data", header=F) ## Lectura dels accidents
 
