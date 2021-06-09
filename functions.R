@@ -133,5 +133,5 @@ print_path_graph <- function(g, path){
        vertex.size=3, vertex.color=vcol, vertex.label="",
        edge.color=ecol,
        window=FALSE, axes=FALSE)
-  box()
+  #box()
 }

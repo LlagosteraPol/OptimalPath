@@ -13,12 +13,13 @@ library(spatstat)
 Dades_vertex<-read.table("DB/Data/Dades_vertex_4_juny.data",header=FALSE)
 Dades_segments<-read.table("DB/Data/Dades_segments_4_juny.data",header=FALSE)
 Dades_pesos<-read.table("DB/Data/Dades_pesos_750_4_juny.data",header=FALSE)
+#Dades_distancies<-read.table("DB/Data/Dades_Dist_creua_4_juny.data",header=FALSE)
+Dades_distancies<-rep(1, 108)
+#Dades_vertex<-read.table("DB/Data/Dades_vertex.data",header=FALSE)
+#Dades_segments<-read.table("DB/Data/Dades_segments.data",header=FALSE)
+#Dades_pesos<-read.table("DB/Data/Dades_pesos_750.data",header=FALSE)
+#Dades_distancies<-read.table("DB/Data/Dades_Dist_creua.data",header=FALSE)
 
-Dades_vertex<-read.table("DB/Data/Dades_vertex.data",header=FALSE)
-Dades_segments<-read.table("DB/Data/Dades_segments.data",header=FALSE)
-Dades_pesos<-read.table("DB/Data/Dades_pesos_750.data",header=FALSE)
-
-Dades_distancies<-read.table("DB/Data/Dades_Dist_creua.data",header=FALSE)
 ACC<-read.table("DB/Data/Projected_Accidents_Cat.data", header=F) ## Lectura dels accidents
 
 
@@ -163,14 +164,14 @@ best<- best_paths(graph = g, from = "1", to = "15", weight = "all")
 top_paths <- best[1:10]
 
 
-#----------------------------------PLOT FIGURE 3----------------------------------
-pdf("Images/Figure3.pdf",height=6,width=13.5)
+#----------------------------------PLOT FIGURE 4----------------------------------
+pdf("Images/Figure4.pdf",height=6,width=13.5)
 layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
 
 all_shortest_paths <- best_paths(graph = g, from = alcarras, to = albages, weight = "distance")
 print_path_graph(g, all_shortest_paths[[1]]$path)
 #all_shortest_paths <- best_paths(graph = g, from = 62, to = seros, weight = "distance")
-all_shortest_paths <- best_paths(graph = g, from = 48, to = seros, weight = "distance")
+all_shortest_paths <- best_paths(graph = g, from = 33, to = 34, weight = "distance")
 print_path_graph(g, all_shortest_paths[[1]]$path)
 
 all_shortest_paths <- best_paths(graph = g, from = alcarras, to = albages, weight = "weight")
