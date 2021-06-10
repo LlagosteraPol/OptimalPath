@@ -8,13 +8,19 @@ require(igraph)
 library(roxygen2)
 library(spatstat)
 
+load(file="DB/RData/Linear_pixel_final_9_Juny_2021_ultima_copia.RData")
 
 #Importa dades
-Dades_vertex<-read.table("DB/Data/Dades_vertex_4_juny.data",header=FALSE)
-Dades_segments<-read.table("DB/Data/Dades_segments_4_juny.data",header=FALSE)
-Dades_pesos<-read.table("DB/Data/Dades_pesos_750_4_juny.data",header=FALSE)
-#Dades_distancies<-read.table("DB/Data/Dades_Dist_creua_4_juny.data",header=FALSE)
-Dades_distancies<-rep(1, 108)
+Dades_vertex<-data.frame(V1=LNnew$vertices$x, V2=LNnew$vertices$y)
+Dades_segments<-data.frame(V1=LNnew$from, V2=LNnew$to)
+Dades_pesos<-data.frame(V1=seg_m)
+Dades_distancies<-data.frame(V1=length_seg_entre_cross)
+  
+# Dades_vertex<-read.table("DB/Data/Dades_vertex_4_juny.data",header=FALSE)
+# Dades_segments<-read.table("DB/Data/Dades_segments_4_juny.data",header=FALSE)
+# Dades_pesos<-read.table("DB/Data/Dades_pesos_750_4_juny.data",header=FALSE)
+# Dades_distancies<-read.table("DB/Data/Dades_Dist_creua_4_juny.data",header=FALSE)
+
 #Dades_vertex<-read.table("DB/Data/Dades_vertex.data",header=FALSE)
 #Dades_segments<-read.table("DB/Data/Dades_segments.data",header=FALSE)
 #Dades_pesos<-read.table("DB/Data/Dades_pesos_750.data",header=FALSE)
@@ -85,6 +91,9 @@ Pesos<-Dades_pesos$V1
 #per exemple, Pesos[1] és el pes de l'aresta 1 (amb el mateix ordre que estan en l'objecte LN_vertex)
 #----------------------------------------------------------------------------------------------
 
+
+#----------------------------------------CREATE GRAPH-----------------------------------------
+
 # Add weights to the edges matrix
 weighted_segments <- cbind(Dades_segments, Dades_pesos) 
 weighted_segments <- cbind(weighted_segments, Dades_distancies)
@@ -96,25 +105,28 @@ weighted_segments <- cbind(weighted_segments, Dades_totes)
 
 colnames(weighted_segments) <- c("from","to","weight","distance", "all")
 
+vertices_df <- data.frame(names=seq(1, length(Dades_vertex[[1]]), 1) , V1 = Dades_vertex$V1, V2 = Dades_vertex$V2)
+
 segments_df <- data.frame(from = weighted_segments$from,
                           to = weighted_segments$to,
                           weight= weighted_segments$weight,
                           distance = weighted_segments$distance,
                           all = weighted_segments$all)
 
-# g <- graph_from_data_frame(segments_df, directed=FALSE) # Not working properly
+g = graph_from_data_frame(segments_df, directed=FALSE, vertices=vertices_df)
 
 
-#----------------------------------------CREATE GRAPH-----------------------------------------
+#-------------Create graph not working (it doesn't assign the desired edge id's)---------
 
-g <- graph_from_adjacency_matrix(LN_vertex$m, mode = "undirected")
+#g <- graph_from_adjacency_matrix(LN_vertex$m, mode = "undirected")
 # Add vertices coordinates
-g <- g %>% set_vertex_attr(name = "V1", value = Dades_vertex$V1) %>% 
-           set_vertex_attr(name = "V2", value = Dades_vertex$V2)
+#g <- g %>% set_vertex_attr(name = "V1", value = Dades_vertex$V1) %>% 
+#           set_vertex_attr(name = "V2", value = Dades_vertex$V2)
 # Add edge weights
-g <- g %>% set_edge_attr(name = "weight", value = weighted_segments$weight) %>% 
-           set_edge_attr(name = "distance", value = weighted_segments$distance) %>% 
-           set_edge_attr(name = "all", value = weighted_segments$all)
+#g <- g %>% set_edge_attr(name = "weight", value = weighted_segments$weight) %>% 
+#           set_edge_attr(name = "distance", value = weighted_segments$distance) %>% 
+#           set_edge_attr(name = "all", value = weighted_segments$all)
+#----------------------------------------------------------------------------------------
 
 
 #-----------------------------------------TEST-------------------------------------------------
@@ -151,34 +163,32 @@ alcarras = "82"
 lleida = "88"
 
 mtx = matrix(cbind(vertex_attr(g)$V1, vertex_attr(g)$V2), ncol=2)
-plot(g, layout = mtx,window=FALSE, axes=FALSE, vertex.size=1)
+plot(g, layout = mtx,window=FALSE, axes=FALSE, vertex.size=1, cex.main=1.25, cex.lab=1.5, cex.axis=0.75)
 #----------------------------------------------------------
 
-all_shortest_paths <- best_paths(graph = g, from = vilanova, to = seros, weight = "distance")
-top_shortest_paths <- all_shortest_paths[1:10]
+#all_shortest_paths <- best_paths(graph = g, from = vilanova, to = seros, weight = "distance")
+#top_shortest_paths <- all_shortest_paths[1:10]
 
-all_safest_paths <- best_paths(graph = g, from = vilanova, to = seros, weight = "weight")
-top_safest_paths <- all_safest_paths[1:10]
+#all_safest_paths <- best_paths(graph = g, from = vilanova, to = seros, weight = "weight")
+#top_safest_paths <- all_safest_paths[1:10]
 
-best<- best_paths(graph = g, from = "1", to = "15", weight = "all")
-top_paths <- best[1:10]
+#best<- best_paths(graph = g, from = "1", to = "15", weight = "all")
+#top_paths <- best[1:10]
 
+# The calculation of all paths takes time...
+all_shortest_paths11 <- ordered_paths(graph = g, from = alcarras, to = albages, weight = "distance")
+all_shortest_paths21 <- ordered_paths(graph = g, from = 63, to = 197, weight = "distance")
+all_shortest_paths12 <- ordered_paths(graph = g, from = alcarras, to = albages, weight = "weight")
+all_shortest_paths22 <- ordered_paths(graph = g, from = 63, to = 197, weight = "weight")
 
 #----------------------------------PLOT FIGURE 4----------------------------------
 pdf("Images/Figure4.pdf",height=6,width=13.5)
 layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
 
-all_shortest_paths <- best_paths(graph = g, from = alcarras, to = albages, weight = "distance")
-print_path_graph(g, all_shortest_paths[[1]]$path)
-#all_shortest_paths <- best_paths(graph = g, from = 62, to = seros, weight = "distance")
-all_shortest_paths <- best_paths(graph = g, from = 33, to = 34, weight = "distance")
-print_path_graph(g, all_shortest_paths[[1]]$path)
-
-all_shortest_paths <- best_paths(graph = g, from = alcarras, to = albages, weight = "weight")
-print_path_graph(g, all_shortest_paths[[1]]$path)
-#all_shortest_paths <- best_paths(graph = g, from = 62, to = seros, weight = "weight")
-all_shortest_paths <- best_paths(graph = g, from = 48, to = seros, weight = "weight")
-print_path_graph(g, all_shortest_paths[[1]]$path)
+print_path_graph(g, all_shortest_paths11[[1]]$path)
+print_path_graph(g, all_shortest_paths21[[1]]$path)
+print_path_graph(g, all_shortest_paths12[[1]]$path)
+print_path_graph(g, all_shortest_paths22[[1]]$path)
 
 dev.off()
 

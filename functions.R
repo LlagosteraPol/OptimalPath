@@ -26,22 +26,10 @@ paths_info <- function(graph, from, to){
   return(ipaths)
 }
 
-weight_order <- function(graph, from, to, type){
-  ipaths <- paths_info(graph = graph, from = from, to=to)
-  if(type == "distance"){
-    return(ipaths[order(sapply(ipaths,'[[',4))])
-  }
-  else if (type == "weight"){
-    return(ipaths[order(sapply(ipaths,'[[',5))])
-  }
-
-  return(ipaths)
-}
 
 rate_paths <- function(graph, from, to){
   ipaths <- paths_info(graph = graph, from = from, to=to)
-  #distance_order <- weight_order(graph = graph, from = from, to=to, type="distance")
-  #weight_order <-  weight_order(graph = graph, from = from, to=to, type="weight")
+  
   # distance order
   ipaths <- ipaths[order(sapply(ipaths,'[[',4))]
   
@@ -60,7 +48,7 @@ rate_paths <- function(graph, from, to){
 
 #' Get the shortest n paths between two nodes (depending on weight).
 #' 
-#' @name best_n_paths
+#' @name ordered_paths
 #' @param graph The graph on which calculates the paths
 #' @param from Source node.
 #' @param to Ending node.
@@ -68,10 +56,10 @@ rate_paths <- function(graph, from, to){
 #' @param weight The weight to calculate the shortests paths, can be 'weight' or 'distance' (default = weight)
 #' @return list of lists containing the top best n paths and its tota weight.
 #' 
-best_paths <- function(graph, from, to, weight='weight'){
+ordered_paths <- function(graph, from, to, weight){
   all_paths <- all_simple_paths(g, from=from, to=to)
   
-  ordered_paths <- list()
+  paths_ordered <- list()
   
   for (path in all_paths){
     if(weight == "distance"){
@@ -83,21 +71,31 @@ best_paths <- function(graph, from, to, weight='weight'){
     else{
       weight_sum <- sum(E(g, path = unlist(path))$all)
     }
-    ordered_paths[[length(ordered_paths)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
-    #if(length(top_n) < n){
-    #  top_n[[length(top_n)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
-    #}
-    #else{
-    #  top_n <- top_n[order(sapply(top_n,'[[',1))]
-      
-    #  if(weight_sum < top_n[[1]]$weight){
-    #    top_n[[1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
-    #  }
-    #}
+    paths_ordered[[length(paths_ordered)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
   }
-  return(ordered_paths[order(sapply(ordered_paths,'[[',1))])
+  return(paths_ordered[order(sapply(paths_ordered,'[[',1))])
 }
 
+filter_paths <- function(graph, from, to, edge_param, filter){
+  all_paths <- all_simple_paths(g, from=from, to=to)
+  
+  paths_ordered <- list()
+  weight_sum <- 0
+  for (path in all_paths){
+    for (edge in path){
+      if(E(g)[edge]$edge_param >= filter){next}
+      else{
+        weight_sum <- weight_sum + E(g)[edge]$edge_param
+      }
+    }
+    paths_ordered[[length(paths_ordered)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
+  }
+  return(paths_ordered[order(sapply(paths_ordered,'[[',1))])
+}
+
+filter_graph <- function(graph, edge_param, filter){
+  # delete_edges(graph, edges)
+}
 
 #' Print the map of the given ppp object with the given path as green nodes, it also print the other nodes as red
 #' 
