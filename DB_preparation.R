@@ -11,15 +11,15 @@ library(spatstat)
 load(file="DB/RData/Linear_pixel_final_9_Juny_2021_ultima_copia.RData")
 
 #Importa dades
-Dades_vertex<-data.frame(V1=LNnew$vertices$x, V2=LNnew$vertices$y)
-Dades_segments<-data.frame(V1=LNnew$from, V2=LNnew$to)
-Dades_pesos<-data.frame(V1=seg_m)
-Dades_distancies<-data.frame(V1=length_seg_entre_cross)
+# Dades_vertex<-data.frame(V1=LNnew$vertices$x, V2=LNnew$vertices$y)
+# Dades_segments<-data.frame(V1=LNnew$from, V2=LNnew$to)
+# Dades_pesos<-data.frame(V1=seg_m)
+# Dades_distancies<-data.frame(V1=length_seg_entre_cross)
   
-# Dades_vertex<-read.table("DB/Data/Dades_vertex_4_juny.data",header=FALSE)
-# Dades_segments<-read.table("DB/Data/Dades_segments_4_juny.data",header=FALSE)
-# Dades_pesos<-read.table("DB/Data/Dades_pesos_750_4_juny.data",header=FALSE)
-# Dades_distancies<-read.table("DB/Data/Dades_Dist_creua_4_juny.data",header=FALSE)
+Dades_vertex<-read.table("DB/Data/Dades_vertex_4_juny.data",header=FALSE)
+Dades_segments<-read.table("DB/Data/Dades_segments_4_juny.data",header=FALSE)
+Dades_pesos<-read.table("DB/Data/Dades_pesos_750_4_juny.data",header=FALSE)
+Dades_distancies<-read.table("DB/Data/Dades_Dist_creua_4_juny.data",header=FALSE)
 
 #Dades_vertex<-read.table("DB/Data/Dades_vertex.data",header=FALSE)
 #Dades_segments<-read.table("DB/Data/Dades_segments.data",header=FALSE)
@@ -175,11 +175,14 @@ plot(g, layout = mtx,window=FALSE, axes=FALSE, vertex.size=1, cex.main=1.25, cex
 #best<- best_paths(graph = g, from = "1", to = "15", weight = "all")
 #top_paths <- best[1:10]
 
+source("functions.R")
+filtered_paths <- filter_paths(graph = g, from = alcarras, to = albages, edge_param = "distance", filter = 10000)
+
 # The calculation of all paths takes time...
-all_shortest_paths11 <- ordered_paths(graph = g, from = alcarras, to = albages, weight = "distance")
-all_shortest_paths21 <- ordered_paths(graph = g, from = 63, to = 197, weight = "distance")
-all_shortest_paths12 <- ordered_paths(graph = g, from = alcarras, to = albages, weight = "weight")
-all_shortest_paths22 <- ordered_paths(graph = g, from = 63, to = 197, weight = "weight")
+all_shortest_paths11 <- ordered_paths(graph = g, from = alcarras, to = albages, edge_param = "distance")
+all_shortest_paths21 <- ordered_paths(graph = g, from = 63, to = 197, edge_param = "distance")
+all_shortest_paths12 <- ordered_paths(graph = g, from = alcarras, to = albages, edge_param = "weight")
+all_shortest_paths22 <- ordered_paths(graph = g, from = 63, to = 197, edge_param = "weight")
 
 #----------------------------------PLOT FIGURE 4----------------------------------
 pdf("Images/Figure4.pdf",height=6,width=13.5)

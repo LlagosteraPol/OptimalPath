@@ -46,26 +46,25 @@ rate_paths <- function(graph, from, to){
   return(ipaths)
 }
 
-#' Get the shortest n paths between two nodes (depending on weight).
+#' Get all the paths between two nodes ordered from less to more weight.
 #' 
 #' @name ordered_paths
 #' @param graph The graph on which calculates the paths
 #' @param from Source node.
 #' @param to Ending node.
-#' @param n Number of bests paths to show
-#' @param weight The weight to calculate the shortests paths, can be 'weight' or 'distance' (default = weight)
-#' @return list of lists containing the top best n paths and its tota weight.
+#' @param edge_param The weight to calculate the shortests paths, can be 'weight' or 'distance'
+#' @return list of lists containing the all the paths ordered by weight.
 #' 
-ordered_paths <- function(graph, from, to, weight){
+ordered_paths <- function(graph, from, to, edge_param){
   all_paths <- all_simple_paths(g, from=from, to=to)
   
   paths_ordered <- list()
   
   for (path in all_paths){
-    if(weight == "distance"){
+    if(edge_param == "distance"){
       weight_sum <- sum(E(g, path = unlist(path))$distance)
     }
-    else if (weight == "weight"){
+    else if (edge_param == "weight"){
       weight_sum <- sum(E(g, path = unlist(path))$weight)
     }
     else{
@@ -76,21 +75,48 @@ ordered_paths <- function(graph, from, to, weight){
   return(paths_ordered[order(sapply(paths_ordered,'[[',1))])
 }
 
+
+#' Get all the paths between two nodes ordered from less to more weight.
+#' It saves in another list, alls the paths that contains edges with 
+#' weight superior to the specified in the function.
+#' 
+#' @name filter_paths
+#' @param graph The graph on which calculates the paths
+#' @param from Source node.
+#' @param to Ending node.
+#' @param edge_param The weight to calculate the shortests paths, can be 'weight' or 'distance'
+#' @param filter Limit weight that an edge of a path can contain
+#' @return list of lists containing the all the paths ordered by weight
+#' and another identical list but with the paths with edges that has 
+#' the sepecified limit weight or greater.
+#' 
 filter_paths <- function(graph, from, to, edge_param, filter){
   all_paths <- all_simple_paths(g, from=from, to=to)
   
   paths_ordered <- list()
-  weight_sum <- 0
+  black_list <- list()
+  is_forbiden <- FALSE
+  
   for (path in all_paths){
+    weight_sum <- 0
+    is_forbiden <- FALSE
     for (edge in path){
-      if(E(g)[edge]$edge_param >= filter){next}
-      else{
-        weight_sum <- weight_sum + E(g)[edge]$edge_param
+      if(edge_attr(g, edge_param)[edge] >= filter){
+        is_forbiden <- TRUE
       }
+      weight_sum <- weight_sum + edge_attr(g, edge_param)[edge]
     }
-    paths_ordered[[length(paths_ordered)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
+    if (is_forbiden){
+      black_list[[length(black_list)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
+    }
+    
+    else{
+      paths_ordered[[length(paths_ordered)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
+    }
+    
   }
-  return(paths_ordered[order(sapply(paths_ordered,'[[',1))])
+  return(list(paths = paths_ordered[order(sapply(paths_ordered,'[[',1))], 
+              black_list = black_list[order(sapply(black_list,'[[',1))]))
 }
 
 filter_graph <- function(graph, edge_param, filter){
