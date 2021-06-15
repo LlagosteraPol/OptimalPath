@@ -34,6 +34,39 @@ plot(LN_pp,axes=TRUE)
 #El vector amb les distancies es  length_seg_entre_cross
 ls(LNnew)
 
+#---------------------------------------------------PLOT------------------------------------------------------
+image(ww,col=terrain.colors(100)) ##per mostrar els pesos per pixel, ww
+x11()
+plot.lpp.lines(LNnew,seg_m) ##per ensenyar els pesos per lines
+
+##funció plot.lpp.lines()
+plot.lpp.lines<- function(LNnew,seg_m,width_line=0.1){
+  
+  x0<-c();y0<-c();x1<-c();y1<-c()
+  for(i in 1:LNnew$lines$n){
+    x0[i]<-LNnew$lines$ends$x0[i]
+    y0[i]<-LNnew$lines$ends$y0[i]
+    x1[i]<-LNnew$lines$ends$x1[i]
+    y1[i]<-LNnew$lines$ends$y1[i]
+  }
+  
+  #generar punts
+  j1<-0;x<-c();y<-c();mk<-c()
+  for(i in 1:LNnew$lines$n){
+    m<-(y1[i]-y0[i])/(x1[i]-x0[i])
+    a<-y0[i]-m*x0[i]
+    for(j in 1:100){
+      j1<-j1+1
+      x[j1]<-runif(1,min(x0[i],x1[i]),max(x0[i],x1[i]))
+      y[j1]<-m*x[j1]+a
+      mk[j1]<-seg_m[i]
+    }
+  }
+  pppp<-ppp(x,y,marks=mk,window=LNnew$window)
+  plot(LNnew)
+  plot(pppp, pch=19,cex=width_line,cols=terrain.colors(100),add=TRUE)
+}
+
 #-------------------------------Check ID of element in array by value----------------------------------------
 a <- c(3, 2, -7, -3, 5, 2)
 c <- which(a==-7) # this will give you numerical value

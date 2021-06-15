@@ -178,6 +178,8 @@ plot(g, layout = mtx,window=FALSE, axes=FALSE, vertex.size=1, cex.main=1.25, cex
 # The calculation of all paths takes time...
 all_shortest_paths11 <- ordered_paths(graph = g, from = alcarras, to = albages, weight = "distance")
 all_shortest_paths21 <- ordered_paths(graph = g, from = 63, to = 197, weight = "distance")
+
+all_shortest_paths11 <- ordered_paths(graph = g, from = alcarras, to = albages, weight = "distance")
 all_shortest_paths12 <- ordered_paths(graph = g, from = alcarras, to = albages, weight = "weight")
 all_shortest_paths22 <- ordered_paths(graph = g, from = 63, to = 197, weight = "weight")
 
