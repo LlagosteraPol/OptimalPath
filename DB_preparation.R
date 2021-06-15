@@ -179,22 +179,17 @@ source("functions.R")
 filtered_paths <- filter_paths(graph = g, from = alcarras, to = albages, edge_param = "distance", filter = 10000)
 
 # The calculation of all paths takes time...
-<<<<<<< HEAD
-all_shortest_paths11 <- ordered_paths(graph = g, from = alcarras, to = albages, weight = "distance")
-all_shortest_paths21 <- ordered_paths(graph = g, from = 63, to = 197, weight = "distance")
 
-all_shortest_paths11 <- ordered_paths(graph = g, from = alcarras, to = albages, weight = "distance")
-all_shortest_paths12 <- ordered_paths(graph = g, from = alcarras, to = albages, weight = "weight")
-all_shortest_paths22 <- ordered_paths(graph = g, from = 63, to = 197, weight = "weight")
-=======
 all_shortest_paths11 <- ordered_paths(graph = g, from = alcarras, to = albages, edge_param = "distance")
-all_shortest_paths21 <- ordered_paths(graph = g, from = 63, to = 197, edge_param = "distance")
+all_shortest_paths21 <- ordered_paths(graph = g, from = cogul, to = almacelles, edge_param = "distance")
+#all_shortest_paths21 <- ordered_paths(graph = g, from = 63, to = 197, edge_param = "distance")
 all_shortest_paths12 <- ordered_paths(graph = g, from = alcarras, to = albages, edge_param = "weight")
-all_shortest_paths22 <- ordered_paths(graph = g, from = 63, to = 197, edge_param = "weight")
->>>>>>> 631cc760ef5f8a94e054f7cb2ea96c595fb4fb28
+all_shortest_paths22 <- ordered_paths(graph = g, from = cogul, to = almacelles, edge_param = "distance")
+#all_shortest_paths22 <- ordered_paths(graph = g, from = 63, to = 197, edge_param = "weight")
+
 
 #----------------------------------PLOT FIGURE 4----------------------------------
-pdf("Images/Figure4.pdf",height=6,width=13.5)
+pdf("Images/Figure4.pdf",height=12,width=13.5)
 layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
 
 print_path_graph(g, all_shortest_paths11[[1]]$path)

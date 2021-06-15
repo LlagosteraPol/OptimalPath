@@ -151,11 +151,11 @@ print_path_graph <- function(g, path){
   
   ecol <- rep("black", ecount(g))
   ecol[E(g, path=path)] <- "green"
-  
+
   mtx = matrix(cbind(vertex_attr(g)$V1, vertex_attr(g)$V2), ncol=2)
   plot(g, layout = mtx, 
        vertex.size=3, vertex.color=vcol, vertex.label="",
        edge.color=ecol,
        window=FALSE, axes=FALSE)
-  #box()
+  box()
 }
