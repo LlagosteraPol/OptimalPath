@@ -8,6 +8,7 @@ library(maptools)
 # get.edge.ids(g, c(1,2, 4,5)) # to know the id of edges given its vertices
 # as_ids(E(g)[33 %--% 35]) # same as before
 # E(g)[33 %--% 35]$distance <- 999 # set weight
+# adjacent_vertices(g, c(1, 34))
 
 #has de carregar aquest fitxer
 load(file="DB/RData/Linear_pixel_final_9_Juny_2021_ultima_copia.RData")

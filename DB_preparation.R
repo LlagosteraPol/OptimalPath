@@ -11,15 +11,15 @@ library(spatstat)
 load(file="DB/RData/Linear_pixel_final_9_Juny_2021_ultima_copia.RData")
 
 #Importa dades
-# Dades_vertex<-data.frame(V1=LNnew$vertices$x, V2=LNnew$vertices$y)
-# Dades_segments<-data.frame(V1=LNnew$from, V2=LNnew$to)
-# Dades_pesos<-data.frame(V1=seg_m)
-# Dades_distancies<-data.frame(V1=length_seg_entre_cross)
-  
-Dades_vertex<-read.table("DB/Data/Dades_vertex_4_juny.data",header=FALSE)
-Dades_segments<-read.table("DB/Data/Dades_segments_4_juny.data",header=FALSE)
-Dades_pesos<-read.table("DB/Data/Dades_pesos_750_4_juny.data",header=FALSE)
-Dades_distancies<-read.table("DB/Data/Dades_Dist_creua_4_juny.data",header=FALSE)
+Dades_vertex<-data.frame(V1=LNnew$vertices$x, V2=LNnew$vertices$y)
+Dades_segments<-data.frame(V1=LNnew$from, V2=LNnew$to)
+Dades_pesos<-data.frame(V1=seg_m)
+Dades_distancies<-data.frame(V1=length_seg_entre_cross)
+
+# Dades_vertex<-read.table("DB/Data/Dades_vertex_4_juny.data",header=FALSE)
+# Dades_segments<-read.table("DB/Data/Dades_segments_4_juny.data",header=FALSE)
+# Dades_pesos<-read.table("DB/Data/Dades_pesos_750_4_juny.data",header=FALSE)
+# Dades_distancies<-read.table("DB/Data/Dades_Dist_creua_4_juny.data",header=FALSE)
 
 #Dades_vertex<-read.table("DB/Data/Dades_vertex.data",header=FALSE)
 #Dades_segments<-read.table("DB/Data/Dades_segments.data",header=FALSE)
@@ -144,23 +144,35 @@ g = graph_from_data_frame(segments_df, directed=FALSE, vertices=vertices_df)
 # shortest_weight   <-  shortest.paths(g, v=V(g), weights=E(g)$weight)
 # shortest_distance <-  shortest.paths(g, v=V(g), weights=E(g)$distance)
 
-# -----------------Village node index----------------------
-seros = "2"
-torres = "16"
-albatarrec = "22"
-cogul = "31"
-artesa = "32"
-castelldans = "34"
-albages = "36"
-juneda = "44"
-alamus = "52"
-belloc = "54"
-vilanova = "69"
-menarguens = "66"
-benavent = "68"
-almacelles = "77"
-alcarras = "82"
-lleida = "88"
+# -----------------Village node index Simplified----------------------
+# seros = "2"
+# torres = "16"
+# albatarrec = "22"
+# cogul = "31"
+# artesa = "32"
+# castelldans = "34"
+# albages = "36"
+# juneda = "44"
+# alamus = "52"
+# belloc = "54"
+# vilanova = "69"
+# menarguens = "66"
+# benavent = "68"
+# almacelles = "77"
+# alcarras = "82"
+# lleida = "88"
+
+#all_shortest_paths11 <- ordered_paths(graph = g, from = alcarras, to = albages, edge_param = "distance")
+#all_shortest_paths21 <- ordered_paths(graph = g, from = cogul, to = almacelles, edge_param = "distance")
+#all_shortest_paths12 <- ordered_paths(graph = g, from = alcarras, to = albages, edge_param = "weight")
+#all_shortest_paths22 <- ordered_paths(graph = g, from = cogul, to = almacelles, edge_param = "distance")
+
+# -----------------Village node index Detailed----------------------
+
+juneda = 63
+soses = 161
+menarguens = 197
+belloc = 209
 
 mtx = matrix(cbind(vertex_attr(g)$V1, vertex_attr(g)$V2), ncol=2)
 plot(g, layout = mtx,window=FALSE, axes=FALSE, vertex.size=1, cex.main=1.25, cex.lab=1.5, cex.axis=0.75)
@@ -175,17 +187,17 @@ plot(g, layout = mtx,window=FALSE, axes=FALSE, vertex.size=1, cex.main=1.25, cex
 #best<- best_paths(graph = g, from = "1", to = "15", weight = "all")
 #top_paths <- best[1:10]
 
-source("functions.R")
+#source("functions.R")
 filtered_paths <- filter_paths(graph = g, from = alcarras, to = albages, edge_param = "distance", filter = 10000)
 
 # The calculation of all paths takes time...
 
-all_shortest_paths11 <- ordered_paths(graph = g, from = alcarras, to = albages, edge_param = "distance")
-all_shortest_paths21 <- ordered_paths(graph = g, from = cogul, to = almacelles, edge_param = "distance")
-#all_shortest_paths21 <- ordered_paths(graph = g, from = 63, to = 197, edge_param = "distance")
-all_shortest_paths12 <- ordered_paths(graph = g, from = alcarras, to = albages, edge_param = "weight")
-all_shortest_paths22 <- ordered_paths(graph = g, from = cogul, to = almacelles, edge_param = "distance")
-#all_shortest_paths22 <- ordered_paths(graph = g, from = 63, to = 197, edge_param = "weight")
+
+all_shortest_paths11 <- ordered_paths(graph = g, from = soses, to = belloc, edge_param = "distance")
+all_shortest_paths21 <- ordered_paths(graph = g, from = juneda, to = menarguens, edge_param = "distance")
+
+all_shortest_paths12 <- ordered_paths(graph = g, from = soses, to = belloc, edge_param = "weight")
+all_shortest_paths22 <- ordered_paths(graph = g, from = juneda, to = menarguens, edge_param = "weight")
 
 
 #----------------------------------PLOT FIGURE 4----------------------------------
