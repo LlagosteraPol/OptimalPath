@@ -8,7 +8,7 @@ require(igraph)
 library(roxygen2)
 library(spatstat)
 
-load(file="DB/RData/Linear_pixel_final_9_Juny_2021_ultima_copia.RData")
+load(file="DB/RData/Linear_pixel_final_18_Juny_2021_ultima_copia.RData")
 
 #Importa dades
 Dades_vertex<-data.frame(V1=LNnew$vertices$x, V2=LNnew$vertices$y)
