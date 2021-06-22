@@ -61,7 +61,7 @@ layout(matrix(c(1,2),1,2,byrow=TRUE))
 
 #--------------------------------------Plot map with nodes--------------------------------------
 plot(LN_vertex,main="")
-points(ppp_vertex,pch=19,col="black")
+points(ppp_vertex,pch=19,col="black", cex=0.5)
 
 
 #-------------------------------Plot map with projected accidents-------------------------------
@@ -77,7 +77,7 @@ Acc_LN$Xproj
 
 ##Ara ja pots generar el objecte que contingui el point pattern i les carreteres
 LN_pp<-lpp(Acc_LN$Xproj,LN_vertex)
-plot(LN_pp, main="")
+plot(LN_pp, main="", cex=0.5)
 rect(minx,miny,maxx,maxy,border="black",lwd=2)
 dev.off()
 #----------------------------------------------------------------------------------------------

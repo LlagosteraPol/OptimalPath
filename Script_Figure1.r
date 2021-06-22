@@ -7,7 +7,7 @@ library(maptools)
 
 getwd()
 # Read R database code
-load(file="DB/RData/Linear_pixel_final_4_Juny_2021_ultima_copia.RData")
+load(file="DB/RData/Linear_pixel_final_18_Juny_2021_ultima_copia.RData")
 
 ## Lectura dels shapefiles
 pv.spain<-readOGR("DB/SHP/Spain_3.shp")
@@ -54,7 +54,7 @@ ACC_win<-ppp(ACC$V1,ACC$V2, window=win)
 ######################Inici gràfic############################################
 zoombox = "black"
 
-pdf("Images/Figure1_new_Pol.pdf",height=6,width=13.5)
+pdf("Images/Figure1.pdf",height=6,width=13.5)
 #layout(matrix(c(1,2,3,3),2,2,byrow=TRUE))
 layout(matrix(c(1,2,3),1,3,byrow=TRUE))
 
