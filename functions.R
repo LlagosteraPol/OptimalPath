@@ -27,6 +27,14 @@ paths_info <- function(graph, from, to){
 }
 
 
+#' Get all the paths between two nodes and gives in which position are each of its weights (best to worst)
+#' 
+#' @name rate_paths
+#' @param graph The graph on which calculates the paths
+#' @param from Source node.
+#' @param to Ending node.
+#' @return list of lists containing the all the paths with their rated by position.
+#' 
 rate_paths <- function(graph, from, to){
   ipaths <- paths_info(graph = graph, from = from, to=to)
   
