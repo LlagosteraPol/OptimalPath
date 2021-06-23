@@ -11,16 +11,18 @@ library(maptools)
 # adjacent_vertices(g, c(1, 34))
 
 #has de carregar aquest fitxer
-load(file="DB/RData/Linear_pixel_final_9_Juny_2021_ultima_copia.RData")
+load(file="DB/RData/Linear_pixel_final_18_Juny_2021_ultima_copia.RData")
 
 #Ara aquí tens:
 
+#----------------------------------PLOT HEATMAP------------------------------------
 #ww es el mapa de densitat (pixel a pixel) que tens de intensitat d'accidents
-
-plot(ww)
+pdf("Images/Heatmap.pdf",height=6,width=13.5)
+plot(ww, main = "")
+dev.off()
+#----------------------------------------------------------------------------------
 
 points(LN_pp,pch=19,col="red", cex=0.5) #LN_pp és el patró puntual projectat
-
 #LNnew és el mapa carreteres (simplificat, però realista) on no surt 
 # aquella conneccio (aquesta hauria d'anar a la Figura1)
 
@@ -106,7 +108,7 @@ as_data_frame(g, what="edges")
 #top_paths <- best[1:10]
 
 source("functions.R")
-source("Igraph_Model.R")
+source("IgraphModel.R")
 #filtered_paths <- filter_paths(graph = g, from = alcarras, to = albages, edge_param = "distance", filter = 10000)
 
 
