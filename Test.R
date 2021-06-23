@@ -118,11 +118,12 @@ menarguens = 197
 belloc = 209
 
 #---------------------------------------------------------------------------------
-infopaths <- paths_info(graph = g, from = soses, to = belloc)
+#infopaths <- paths_info(graph = g, from = soses, to = belloc)
 sos_bell <- rate_paths(graph = g, from = soses, to = belloc)
-sos_bell <- rated[order(sapply(rated,'[[',7))]
+sos_bell_distance_ordered <- sos_bell[order(sapply(sos_bell,'[[',6))]
+sos_bell_weight_ordered <- sos_bell[order(sapply(sos_bell,'[[',7))]
 
 jun_men <- rate_paths(graph = g, from = juneda, to = menarguens)
-jun_men <- rated[order(sapply(rated,'[[',7))]
-
+jun_men_distance_oreded <- jun_men[order(sapply(jun_men,'[[',6))]
+jun_men_weight_oreded <- jun_men[order(sapply(jun_men,'[[',7))]
 #-----------------------------------------------------------------------------------------------------------------------------------------
