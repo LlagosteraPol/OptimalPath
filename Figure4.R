@@ -25,10 +25,11 @@ all_shortest_paths22 <- ordered_paths(graph = g, from = juneda, to = menarguens,
 pdf("Images/Figure4.pdf",height=12,width=13.5)
 layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
 
-print_path_graph(g, all_shortest_paths11[[1]]$path)
-print_path_graph(g, all_shortest_paths21[[1]]$path)
-print_path_graph(g, all_shortest_paths12[[1]]$path)
-print_path_graph(g, all_shortest_paths22[[1]]$path)
+print_path_graph(g, all_shortest_paths12[[1]]$path, color='green')
+print_path_graph(g, all_shortest_paths11[[1]]$path, color='blue')
+
+print_path_graph(g, all_shortest_paths22[[1]]$path, color='green')
+print_path_graph(g, all_shortest_paths21[[1]]$path, color='blue')
 
 dev.off()
 

@@ -149,16 +149,17 @@ print_path_ppp <- function(ppp_obj, path){
 #' as well as the edges
 #' 
 #' @name print_path_graph
-#' @param g 'igraph' Graph object
+#' @param g <igraph> Graph object
 #' @param path Path to be plotted
+#' @param color <string> Color of the path 
 #' @return a plot of the map with the given path
 #' 
-print_path_graph <- function(g, path){
+print_path_graph <- function(g, path, color){
   vcol <- rep("black", vcount(g))
-  vcol[path] <- "green"
+  vcol[path] <- color
   
   ecol <- rep("black", ecount(g))
-  ecol[E(g, path=path)] <- "green"
+  ecol[E(g, path=path)] <- color
 
   mtx = matrix(cbind(vertex_attr(g)$V1, vertex_attr(g)$V2), ncol=2)
   plot(g, layout = mtx, 
@@ -166,4 +167,34 @@ print_path_graph <- function(g, path){
        edge.color=ecol,
        window=FALSE, axes=FALSE)
   box()
+}
+
+##funció plot.lpp.lines()
+plot.lpp.lines<- function(LNnew,seg_m,width_line=0.1){
+  
+  x0<-c();y0<-c();x1<-c();y1<-c()
+  for(i in 1:LNnew$lines$n){
+    x0[i]<-LNnew$lines$ends$x0[i]
+    y0[i]<-LNnew$lines$ends$y0[i]
+    x1[i]<-LNnew$lines$ends$x1[i]
+    y1[i]<-LNnew$lines$ends$y1[i]
+  }
+  
+  #generar punts
+  j1<-0;x<-c();y<-c();mk<-c()
+  for(i in 1:LNnew$lines$n){
+    m<-(y1[i]-y0[i])/(x1[i]-x0[i])
+    a<-y0[i]-m*x0[i]
+    for(j in 1:100){
+      j1<-j1+1
+      x[j1]<-runif(1,min(x0[i],x1[i]),max(x0[i],x1[i]))
+      y[j1]<-m*x[j1]+a
+      mk[j1]<-seg_m[i]
+    }
+  }
+  pppp<-ppp(x,y,marks=mk,window=LNnew$window)
+  plot(LNnew, main="")
+  plot(pppp, pch=19,cex=width_line,cols=topo.colors(100),add=TRUE)
+  rect(LNnew$window$xrange[1],LNnew$window$yrange[1],LNnew$window$xrange[2],LNnew$window$yrange[2],
+       border="black",lwd=1)
 }
