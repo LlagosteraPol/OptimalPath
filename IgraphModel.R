@@ -1,6 +1,4 @@
 
-rm(list = ls())
-
 source("DB_preparation.R")
 
 #----------------------------------------CREATE GRAPH-----------------------------------------
@@ -8,21 +6,21 @@ source("DB_preparation.R")
 # Add weights to the edges matrix
 weighted_segments <- cbind(Dades_segments, Dades_pesos) 
 weighted_segments <- cbind(weighted_segments, Dades_distancies)
+weighted_segments <- cbind(weighted_segments, transformed_distances) 
+weighted_segments <- cbind(weighted_segments, transformed_accIntensities)
 
-# TODO: Potser hi ha problema en l'arrodoniment
-Dades_totes <- matrix(Dades_pesos$V1 + Dades_distancies$V1) 
+colnames(weighted_segments) <- c("from","to","weight","distance", "t_weight", "t_distance")
 
-weighted_segments <- cbind(weighted_segments, Dades_totes)
-
-colnames(weighted_segments) <- c("from","to","weight","distance", "all")
-
-vertices_df <- data.frame(names=seq(1, length(Dades_vertex[[1]]), 1) , V1 = Dades_vertex$V1, V2 = Dades_vertex$V2)
+vertices_df <- data.frame(names = seq(1, length(Dades_vertex[[1]]), 1), 
+                             V1 = Dades_vertex$V1, 
+                             V2 = Dades_vertex$V2)
 
 segments_df <- data.frame(from = weighted_segments$from,
                           to = weighted_segments$to,
                           weight= weighted_segments$weight,
                           distance = weighted_segments$distance,
-                          all = weighted_segments$all)
+                          t_weight = weighted_segments$t_weight,
+                          t_distance = weighted_segments$t_distance)
 
 g = graph_from_data_frame(segments_df, directed=FALSE, vertices=vertices_df)
 

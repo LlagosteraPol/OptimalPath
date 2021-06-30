@@ -10,6 +10,18 @@ get_all_paths <- function(g){
   return(indirect)
 }
 
+
+#' Get all the paths between two nodes and gives information about its weight (accident intensity),
+#' distance, transformed weight and transformed distance (weight and distance
+#' divided by its respective maximums in the network)
+#' 
+#' @name paths_info
+#' @param graph The graph on which calculates the paths
+#' @param from Source node.
+#' @param to Ending node.
+#' @return list of lists containing the all the paths between the two given nodes with information 
+#' related to them.
+#' 
 paths_info <- function(graph, from, to){
   all_paths <- all_simple_paths(g, from=from, to=to)
   
@@ -20,8 +32,16 @@ paths_info <- function(graph, from, to){
     distance_sum <- sum(E(g, path = unlist(path))$distance)
 
     weight_sum <- sum(E(g, path = unlist(path))$weight)
-
-    ipaths[[length(ipaths)+1]] <- list(from = from, to=to, path = as.numeric(unlist(as_ids(path))), distance = distance_sum, weight = weight_sum)
+    
+    t_weight_sum <- sum(E(g, path = unlist(path))$t_weight)
+    
+    t_distance_sum <- sum(E(g, path = unlist(path))$t_distance)
+      
+    ipaths[[length(ipaths)+1]] <- list(from = from, to=to, path = as.numeric(unlist(as_ids(path))), 
+                                       distance = distance_sum, 
+                                       weight = weight_sum,
+                                       t_distance = t_distance_sum,
+                                       t_weight = t_weight_sum)
   }
   return(ipaths)
 }
@@ -36,11 +56,10 @@ paths_info <- function(graph, from, to){
 #' @return list of lists containing the all the paths with their rated by position.
 #' 
 rate_paths <- function(graph, from, to){
-  ipaths <- paths_info(graph = graph, from = from, to=to)
+  ipaths <- paths_info(graph = graph, from = from, to = to)
   
   # distance order
   ipaths <- ipaths[order(sapply(ipaths,'[[',4))]
-  
   for(i in 1:length(ipaths)){
     ipaths[[i]] <- append(ipaths[[i]], list(n_distance=i))
   }
@@ -49,6 +68,18 @@ rate_paths <- function(graph, from, to){
   ipaths <- ipaths[order(sapply(ipaths,'[[',5))]
   for(i in 1:length(ipaths)){
     ipaths[[i]] <- append(ipaths[[i]], list(n_weight=i))
+  }
+  
+  #accident intensity order
+  ipaths <- ipaths[order(sapply(ipaths,'[[',6))]
+  for(i in 1:length(ipaths)){
+    ipaths[[i]] <- append(ipaths[[i]], list(n_t_distance=i))
+  }
+  
+  #accident intensity order
+  ipaths <- ipaths[order(sapply(ipaths,'[[',7))]
+  for(i in 1:length(ipaths)){
+    ipaths[[i]] <- append(ipaths[[i]], list(n_t_weight=i))
   }
   
   return(ipaths)

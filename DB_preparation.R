@@ -16,6 +16,12 @@ Dades_segments<-data.frame(V1=LNnew$from, V2=LNnew$to)
 Dades_pesos<-data.frame(V1=seg_m)
 Dades_distancies<-data.frame(V1=length_seg_entre_cross)
 
+transformed_distances <- data.frame(V1=mapply(FUN = `/`, Dades_distancies, 
+                                              max(Dades_distancies), SIMPLIFY = FALSE))
+transformed_accIntensities <- data.frame(V1=mapply(FUN = `/`, Dades_pesos, 
+                                                   max(Dades_pesos), SIMPLIFY = FALSE))
+# transformed_all <- b*transformed_distances + a*transformed_distances
+
 # Dades_vertex<-read.table("DB/Data/Dades_vertex_4_juny.data",header=FALSE)
 # Dades_segments<-read.table("DB/Data/Dades_segments_4_juny.data",header=FALSE)
 # Dades_pesos<-read.table("DB/Data/Dades_pesos_750_4_juny.data",header=FALSE)
