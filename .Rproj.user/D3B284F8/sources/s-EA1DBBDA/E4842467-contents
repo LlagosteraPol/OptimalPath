@@ -5,24 +5,6 @@ library(spatstat)
 library(rgeos)
 library(maptools)
 
-
-#-----------------------------------------------------Yenpaty library---------------------------------------------
-#To use the yen's algorithm to get the k-shortest paths, install the following library:
-#library(remotes)
-#install_github("ecohealthalliance/yenpathy", build_vignettes = TRUE)
-
-library(yenpathy)
-
-small_graph <- data.frame(
-  start = c(1, 4, 5, 1, 1, 8, 1, 2, 7, 3),
-  end = c(4, 5, 6, 6, 8, 6, 2, 7, 3, 6),
-  weight = c(1, 1, 1.5, 5, 1.5, 2.5, 1.5, 0.5, 0.5, 0.5)
-)
-
-k_shortest_paths(small_graph, from = 1, to = 6)
-
-#-----------------------------------------------------------------------------------------------------------------
-
 # get.edge.ids(g, c(1,2, 4,5)) # to know the id of edges given its vertices
 # as_ids(E(g)[33 %--% 35]) # same as before
 # E(g)[33 %--% 35]$distance <- 999 # set weight
@@ -91,49 +73,3 @@ print(g, e=TRUE, v=TRUE)
 as_data_frame(g, what="vertices")
 as_data_frame(g, what="edges")
 
-#------------------------------------------------------------Get shortest paths-----------------------------------------------------------
-source("functions.R")
-source("IgraphModel.R")
-
-#filtered_paths <- filter_paths(graph = g, from = alcarras, to = albages, edge_param = "distance", filter = 10000)
-
-juneda = 63
-soses = 161
-menarguens = 197
-belloc = 209
-#(graph = g, from = soses, to = belloc)
-short1 <- get.shortest.paths(g,soses,belloc)
-short2 <- shortest_paths(g,soses,belloc)
-
-short_dst <- get.shortest.paths(g,soses,belloc, weight=E(g)$distance)
-
-top_paths <- get_k_shortest_paths(g, from = soses, to = belloc, weight='distance', k=10)
-
-
-#-----------------------------------------------------------------------------------------------------------------------------------------
-library(sf)
-library(maptools)
-library(raster)
-load(url("http://github.com/mgimond/Spatial/raw/master/Data/ppa.RData"))
-
-# Load a pop_sqmile.img population density raster layer
-img  <- raster("pop_sqmile.img")
-pop  <- as.im(img)
-library(spatstat)
-marks(starbucks)  <- NULL
-Window(starbucks) <- ma
-Q <- quadratcount(starbucks, nx= 6, ny=3)
-Q.d <- intensity(Q)
-
-# Plot the density
-plot(intensity(Q, image=TRUE), main=NULL, las=1)  # Plot density raster
-plot(starbucks, pch=20, cex=0.6, col=rgb(0,0,0,.5), add=TRUE)  # Add points
-
-#----------------------------------------------------------------------------------------------------------------------------------------
-
-paths = list()
-for (path_info in all_shortest_paths11){
-  print("--------------------------------------------------------------------------------------------------------------------------------------")
-  print(path_info$path)
-  #append(paths, path_info$path)
-}

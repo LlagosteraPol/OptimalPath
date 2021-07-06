@@ -24,10 +24,8 @@ belloc = 209
 sos_bell <- rate_paths(graph = g, from = soses, to = belloc)
 sos_bell_distance_ordered <- sos_bell[order(sapply(sos_bell,'[[',6))]
 sos_bell_weight_ordered <- sos_bell[order(sapply(sos_bell,'[[',7))]
-sos_bell_all_ordered <- sos_bell[order(sapply(sos_bell,'[[',8))]
 
 jun_men <- rate_paths(graph = g, from = juneda, to = menarguens)
 jun_men_distance_oreded <- jun_men[order(sapply(jun_men,'[[',6))]
 jun_men_weight_oreded <- jun_men[order(sapply(jun_men,'[[',7))]
-jun_men_all_oreded <- jun_men[order(sapply(jun_men,'[[',8))]
 #-----------------------------------------------------------------------------------------------------------------------------------------

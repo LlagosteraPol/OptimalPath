@@ -1,10 +1,3 @@
-library(dils)
-require(igraph)
-library(roxygen2)
-library(spatstat)
-library(yenpathy)
-
-
 get_all_paths <- function(g){
   direct <- get.adjacency(g)
   indirect <- direct
@@ -15,49 +8,6 @@ get_all_paths <- function(g){
     }
   }
   return(indirect)
-}
-
-#' Function that returns the crossings of the network
-#' 
-#' @name getCrossings
-#' @param graph The graph on which calculates the paths
-#' @return crossings - array with an array of nodes with degree > 2
-#' 
-getCrossings = function(graph){
-  crossings <- c()
-  for(node in V(graph)){
-    if(degree(graph, node)>2)
-    {
-      crossings <- c(crossings, node)
-    }
-  }
-  crossings
-}
-
-#' Get the top k shortest paths between two nodes. It uses the library 'yenpathy', To install the library do the following:
-#' library(remotes)
-#' install_github("ecohealthalliance/yenpathy", build_vignettes = TRUE)
-#' 
-#' @name get_k_shortest_paths
-#' @param graph The graph on which calculates the paths
-#' @param from Source node.
-#' @param to Ending node.
-#' @param weight The weight to calculate the shortests paths, can be 'weight' or 'distance'
-#' @param k number of shortest paths to be returned
-#' @return list of lists containing the top k-shortest paths where each path is represented by the vertices constituting it
-#' 
-get_k_shortest_paths <- function(graph, from, to, weight='weight', k){
-  # Get k shortest paths using 'yenpathy' library
-  tmp_df <- as_data_frame(as.directed(graph, mode = "mutual")) # the graph must be converted to directed
-  
-  #Construct the dataframe that will be used to pass to the k_shortest_path 'yenpathy' function
-  g_df <- data.frame(
-    start = as.numeric(unlist(tmp_df$from)), # The ID's are characters (Ex: '1') must be converted to numbers
-    end = as.numeric(unlist(tmp_df$to)),
-    weight = as.numeric(unlist(if (weight=='distance') tmp_df$distance else tmp_df$weight))
-  )
-  
-  return(k_shortest_paths(g_df, from = soses, to = belloc, k=k))
 }
 
 
@@ -120,20 +70,14 @@ rate_paths <- function(graph, from, to){
     ipaths[[i]] <- append(ipaths[[i]], list(n_weight=i))
   }
   
-  #transformed distance order
+  #accident intensity order
   ipaths <- ipaths[order(sapply(ipaths,'[[',6))]
   for(i in 1:length(ipaths)){
     ipaths[[i]] <- append(ipaths[[i]], list(n_t_distance=i))
   }
   
-  #transformed accident intensity order
+  #accident intensity order
   ipaths <- ipaths[order(sapply(ipaths,'[[',7))]
-  for(i in 1:length(ipaths)){
-    ipaths[[i]] <- append(ipaths[[i]], list(n_t_weight=i))
-  }
-  
-  #both transformed accident + distance with ponderation order
-  ipaths <- ipaths[order(sapply(ipaths,'[[',8))]
   for(i in 1:length(ipaths)){
     ipaths[[i]] <- append(ipaths[[i]], list(n_t_weight=i))
   }
@@ -141,26 +85,25 @@ rate_paths <- function(graph, from, to){
   return(ipaths)
 }
 
-
 #' Get all the paths between two nodes ordered from less to more weight.
 #' 
 #' @name ordered_paths
 #' @param graph The graph on which calculates the paths
 #' @param from Source node.
 #' @param to Ending node.
-#' @param weight The weight to calculate the shortests paths, can be 'weight' or 'distance'
+#' @param edge_param The weight to calculate the shortests paths, can be 'weight' or 'distance'
 #' @return list of lists containing the all the paths ordered by weight.
 #' 
-ordered_paths <- function(graph, from, to, weight){
+ordered_paths <- function(graph, from, to, edge_param){
   all_paths <- all_simple_paths(g, from=from, to=to)
   
   paths_ordered <- list()
   
   for (path in all_paths){
-    if(weight == "distance"){
+    if(edge_param == "distance"){
       weight_sum <- sum(E(g, path = unlist(path))$distance)
     }
-    else if (weight == "weight"){
+    else if (edge_param == "weight"){
       weight_sum <- sum(E(g, path = unlist(path))$weight)
     }
     else{
@@ -180,13 +123,13 @@ ordered_paths <- function(graph, from, to, weight){
 #' @param graph The graph on which calculates the paths
 #' @param from Source node.
 #' @param to Ending node.
-#' @param weight The weight to calculate the shortests paths, can be 'weight' or 'distance'
+#' @param edge_param The weight to calculate the shortests paths, can be 'weight' or 'distance'
 #' @param filter Limit weight that an edge of a path can contain
 #' @return list of lists containing the all the paths ordered by weight
 #' and another identical list but with the paths with edges that has 
 #' the sepecified limit weight or greater.
 #' 
-filter_paths <- function(graph, from, to, weight, filter){
+filter_paths <- function(graph, from, to, edge_param, filter){
   all_paths <- all_simple_paths(g, from=from, to=to)
   
   paths_ordered <- list()
@@ -197,10 +140,10 @@ filter_paths <- function(graph, from, to, weight, filter){
     weight_sum <- 0
     is_forbiden <- FALSE
     for (edge in path){
-      if(edge_attr(g, weight)[edge] >= filter){
+      if(edge_attr(g, edge_param)[edge] >= filter){
         is_forbiden <- TRUE
       }
-      weight_sum <- weight_sum + edge_attr(g, weight)[edge]
+      weight_sum <- weight_sum + edge_attr(g, edge_param)[edge]
     }
     if (is_forbiden){
       black_list[[length(black_list)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
@@ -215,6 +158,9 @@ filter_paths <- function(graph, from, to, weight, filter){
               black_list = black_list[order(sapply(black_list,'[[',1))]))
 }
 
+filter_graph <- function(graph, edge_param, filter){
+  # delete_edges(graph, edges)
+}
 
 #' Print the map of the given ppp object with the given path as green nodes, it also print the other nodes as red
 #' 
@@ -230,7 +176,6 @@ print_path_ppp <- function(ppp_obj, path){
   points(ppp_obj[path],pch=19,col="green")
 }
 
-
 #' Print the map of the given a 'igraph' object with the given path as green nodes
 #' as well as the edges
 #' 
@@ -243,15 +188,10 @@ print_path_ppp <- function(ppp_obj, path){
 print_path_graph <- function(g, path, color){
   vcol <- rep("black", vcount(g))
   vcol[path] <- color
-  vcol[path[1]] <- "sandybrown" # Path first node color
-  vcol[path[length(path)]] <- "red" # Path last node color
   
   ecol <- rep("black", ecount(g))
   ecol[E(g, path=path)] <- color
 
-  E(g)$width <- 1
-  E(g, path=path)$width <- 3
-  
   mtx = matrix(cbind(vertex_attr(g)$V1, vertex_attr(g)$V2), ncol=2)
   plot(g, layout = mtx, 
        vertex.size=3, vertex.color=vcol, vertex.label="",
@@ -260,9 +200,8 @@ print_path_graph <- function(g, path, color){
   box()
 }
 
-
 ##funció plot.lpp.lines()
-plot.lpp.lines <- function(LNnew,seg_m,width_line=0.1){
+plot.lpp.lines<- function(LNnew,seg_m,width_line=0.1){
   
   x0<-c();y0<-c();x1<-c();y1<-c()
   for(i in 1:LNnew$lines$n){
@@ -285,35 +224,8 @@ plot.lpp.lines <- function(LNnew,seg_m,width_line=0.1){
     }
   }
   pppp<-ppp(x,y,marks=mk,window=LNnew$window)
-  t_i <- pixellate(pppp, W=LNnew$window)
-  #t_i <- as.im(pppp)
-  t_i2 <- image(x, y, mk, col = hcl.colors(100, "terrain"), axes = FALSE)
-  
   plot(LNnew, main="")
-  plot(t_i2, image=TRUE, col= topo.colors(100))
-  #plot(intensity(pppp), pch=19,cex=width_line, image=TRUE, las=1, main="", col= topo.colors(100), add=TRUE)
-  #plot(pppp, pch=19,cex=width_line,cols=topo.colors(100),add=TRUE, main="", image=TRUE)
+  plot(pppp, pch=19,cex=width_line,cols=topo.colors(100),add=TRUE)
   rect(LNnew$window$xrange[1],LNnew$window$yrange[1],LNnew$window$xrange[2],LNnew$window$yrange[2],
        border="black",lwd=1)
-}
-
-
-#' Combine two sets of weights into one and using a proportion.
-#' 
-#' @name combine_weights
-#' @param data1 <dataframe> With weights
-#' @param data2 <dataframe> With weights
-#' @param prop Proportion used in data1 (data2 will use 1-proportion), must be less or equal than 1
-#' @return <dataframe> with the weights combined
-#' 
-combine_weights <- function(data1, data2, prop = 0.5){
-  if (prop > 1){
-    print("Weight must equal or less than 1. Continuing without proportion.")
-    prop <- 1
-  }
-  
-  
-  transformed_data1 <- data.frame(V1=mapply(FUN = `*`, data1, prop, SIMPLIFY = FALSE))
-  transformed_data2 <- data.frame(V1=mapply(FUN = `*`, data2, (1-prop), SIMPLIFY = FALSE))
-  return (data.frame(V1 = transformed_data1+transformed_data2))
 }
