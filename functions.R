@@ -86,12 +86,15 @@ paths_info <- function(graph, from, to){
     t_weight_sum <- sum(E(g, path = unlist(path))$t_weight)
     
     t_distance_sum <- sum(E(g, path = unlist(path))$t_distance)
+    
+    all_sum <- sum(E(g, path = unlist(path))$all)
       
     ipaths[[length(ipaths)+1]] <- list(from = from, to=to, path = as.numeric(unlist(as_ids(path))), 
                                        distance = distance_sum, 
                                        weight = weight_sum,
                                        t_distance = t_distance_sum,
-                                       t_weight = t_weight_sum)
+                                       t_weight = t_weight_sum,
+                                       all = all_sum) 
   }
   return(ipaths)
 }
