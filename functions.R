@@ -114,31 +114,32 @@ rate_paths <- function(graph, from, to){
   # distance order
   ipaths <- ipaths[order(sapply(ipaths,'[[',4))]
   for(i in 1:length(ipaths)){
-    ipaths[[i]] <- append(ipaths[[i]], list(n_distance=i))
+    #ipaths[[i]] <- append(ipaths[[i]], list(n_distance=i))
+    ipaths[[i]] <- c(ipaths[[i]], n_distance=i)
   }
   
   #accident intensity order
   ipaths <- ipaths[order(sapply(ipaths,'[[',5))]
   for(i in 1:length(ipaths)){
-    ipaths[[i]] <- append(ipaths[[i]], list(n_weight=i))
+    ipaths[[i]] <- c(ipaths[[i]], n_weight=i)
   }
   
   #transformed distance order
   ipaths <- ipaths[order(sapply(ipaths,'[[',6))]
   for(i in 1:length(ipaths)){
-    ipaths[[i]] <- append(ipaths[[i]], list(n_t_distance=i))
+    ipaths[[i]] <- c(ipaths[[i]], n_t_distance=i)
   }
   
   #transformed accident intensity order
   ipaths <- ipaths[order(sapply(ipaths,'[[',7))]
   for(i in 1:length(ipaths)){
-    ipaths[[i]] <- append(ipaths[[i]], list(n_t_weight=i))
+    ipaths[[i]] <- c(ipaths[[i]], n_t_weight=i)
   }
   
   #both transformed accident + distance with ponderation order
   ipaths <- ipaths[order(sapply(ipaths,'[[',8))]
   for(i in 1:length(ipaths)){
-    ipaths[[i]] <- append(ipaths[[i]], list(n_t_all=i))
+    ipaths[[i]] <- c(ipaths[[i]], n_t_all=i)
   }
   
   return(ipaths)
