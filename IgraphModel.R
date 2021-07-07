@@ -6,8 +6,8 @@ source("DB_preparation.R")
 # Add weights to the edges matrix
 weighted_segments <- cbind(Dades_segments, Dades_pesos) 
 weighted_segments <- cbind(weighted_segments, Dades_distancies)
-weighted_segments <- cbind(weighted_segments, transformed_distances) 
-weighted_segments <- cbind(weighted_segments, transformed_accIntensities)
+weighted_segments <- cbind(weighted_segments, transformed_accIntensities) 
+weighted_segments <- cbind(weighted_segments, transformed_distances)
 weighted_segments <- cbind(weighted_segments, all_data)
 
 colnames(weighted_segments) <- c("from","to","weight","distance", "t_weight", "t_distance", "all")

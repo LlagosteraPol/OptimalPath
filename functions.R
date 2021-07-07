@@ -138,7 +138,7 @@ rate_paths <- function(graph, from, to){
   #both transformed accident + distance with ponderation order
   ipaths <- ipaths[order(sapply(ipaths,'[[',8))]
   for(i in 1:length(ipaths)){
-    ipaths[[i]] <- append(ipaths[[i]], list(n_t_weight=i))
+    ipaths[[i]] <- append(ipaths[[i]], list(n_t_all=i))
   }
   
   return(ipaths)
