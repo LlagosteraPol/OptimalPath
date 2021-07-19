@@ -192,18 +192,22 @@ ordered_paths <- function(graph, from, to, weight){
 #' @param to Ending node.
 #' @param weight The weight to calculate the shortests paths, can be 'weight' or 'distance'
 #' @param filter Limit weight that an edge of a path can contain
+#' @param paths The paths that want to be filtered, if it's empty, will calculate all paths
 #' @return list of lists containing the all the paths ordered by weight
 #' and another identical list but with the paths with edges that has 
 #' the sepecified limit weight or greater.
 #' 
-filter_paths <- function(graph, from, to, weight, filter){
-  all_paths <- all_simple_paths(g, from=from, to=to)
+filter_paths <- function(graph, from, to, weight, filter, paths = NULL){
+  if (is.null(paths)){
+    paths <- all_simple_paths(g, from=from, to=to)
+  }
+  
   
   paths_ordered <- list()
   black_list <- list()
   is_forbiden <- FALSE
   
-  for (path in all_paths){
+  for (path in paths){
     weight_sum <- 0
     is_forbiden <- FALSE
     for (edge in path){
