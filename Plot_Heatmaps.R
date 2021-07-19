@@ -3,7 +3,7 @@ source("functions.R")
 
 load(file="DB/RData/Linear_pixel_final_18_Juny_2021_ultima_copia.RData")
 
-pdf("Images/Figure5.pdf",height=6,width=13.5)
+pdf("Images/Heatmaps.pdf",height=6,width=13.5)
 layout(matrix(c(1,2),1,2,byrow=TRUE))
 
 

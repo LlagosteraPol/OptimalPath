@@ -5,13 +5,19 @@ library(spatstat)
 library(yenpathy)
 
 
-get_all_paths <- function(g){
-  direct <- get.adjacency(g)
+#' Gives all the shortest paths lenght between each pair of nodes of the given graph (network)
+#' 
+#' @name get_all_paths
+#' @param graph The graph on which calculates the paths
+#' @return matrix with all the shortest path lenghts
+#' 
+get_all_paths <- function(graph){
+  direct <- get.adjacency(graph)
   indirect <- direct
-  max <- vcount(g)-1
+  max <- vcount(graph)-1
   for(i in 1:max){
     for(j in 1:max){
-      indirect[i,j] <- length(get.all.shortest.paths(g, from=i, to=j))
+      indirect[i,j] <- length(get.all.shortest.paths(graph, from=i, to=j))
     }
   }
   return(indirect)
@@ -177,8 +183,8 @@ ordered_paths <- function(graph, from, to, weight){
 
 
 #' Get all the paths between two nodes ordered from less to more weight.
-#' It saves in another list, alls the paths that contains edges with 
-#' weight superior to the specified in the function.
+#' All paths that contains edges with weight greater to the specified 
+#' in the function are saved in another list.
 #' 
 #' @name filter_paths
 #' @param graph The graph on which calculates the paths
@@ -265,7 +271,12 @@ print_path_graph <- function(g, path, color){
 }
 
 
-##funció plot.lpp.lines()
+#' Plot linnet object
+#' 
+#' @name plot.lpp.lines
+#' @param LNnew Linnet object
+#' @param width_line Witdth of the plotted lines
+#' 
 plot.lpp.lines <- function(LNnew,seg_m,width_line=0.1){
   
   x0<-c();y0<-c();x1<-c();y1<-c()
@@ -276,7 +287,7 @@ plot.lpp.lines <- function(LNnew,seg_m,width_line=0.1){
     y1[i]<-LNnew$lines$ends$y1[i]
   }
   
-  #generar punts
+  #Generate points
   j1<-0;x<-c();y<-c();mk<-c()
   for(i in 1:LNnew$lines$n){
     m<-(y1[i]-y0[i])/(x1[i]-x0[i])
@@ -289,14 +300,9 @@ plot.lpp.lines <- function(LNnew,seg_m,width_line=0.1){
     }
   }
   pppp<-ppp(x,y,marks=mk,window=LNnew$window)
-  t_i <- pixellate(pppp, W=LNnew$window)
-  #t_i <- as.im(pppp)
-  t_i2 <- image(x, y, mk, col = hcl.colors(100, "terrain"), axes = FALSE)
   
   plot(LNnew, main="")
-  plot(t_i2, image=TRUE, col= topo.colors(100))
-  #plot(intensity(pppp), pch=19,cex=width_line, image=TRUE, las=1, main="", col= topo.colors(100), add=TRUE)
-  #plot(pppp, pch=19,cex=width_line,cols=topo.colors(100),add=TRUE, main="", image=TRUE)
+  plot(pppp, pch=19,cex=width_line,cols=topo.colors(100),add=TRUE, main="", image=TRUE)
   rect(LNnew$window$xrange[1],LNnew$window$yrange[1],LNnew$window$xrange[2],LNnew$window$yrange[2],
        border="black",lwd=1)
 }

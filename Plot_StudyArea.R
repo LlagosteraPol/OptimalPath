@@ -54,7 +54,7 @@ ACC_win<-ppp(ACC$V1,ACC$V2, window=win)
 ######################Inici gràfic############################################
 zoombox = "black"
 
-pdf("Images/Figure1.pdf",height=6,width=13.5)
+pdf("Images/StudyArea.pdf",height=6,width=13.5)
 #layout(matrix(c(1,2,3,3),2,2,byrow=TRUE))
 layout(matrix(c(1,2,3),1,3,byrow=TRUE))
 

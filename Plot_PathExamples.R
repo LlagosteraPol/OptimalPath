@@ -21,8 +21,8 @@ all_shortest_paths12 <- ordered_paths(graph = g, from = soses, to = belloc, edge
 all_shortest_paths22 <- ordered_paths(graph = g, from = juneda, to = menarguens, edge_param = "weight")
 
 
-#----------------------------------PLOT FIGURE 4----------------------------------
-pdf("Images/Figure4.pdf",height=12,width=13.5)
+#--------------------------------PLOT Path Examples--------------------------------
+pdf("Images/PathExamples.pdf",height=12,width=13.5)
 layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
 
 print_path_graph(g, all_shortest_paths12[[1]]$path, color='green')
