@@ -169,11 +169,9 @@ ordered_paths <- function(graph, from, to, weight){
   for (path in all_paths){
     if(weight == "distance"){
       weight_sum <- sum(E(g, path = unlist(path))$distance)
-    }
-    else if (weight == "weight"){
+    } else if (weight == "weight"){
       weight_sum <- sum(E(g, path = unlist(path))$weight)
-    }
-    else{
+    } else{
       weight_sum <- sum(E(g, path = unlist(path))$all)
     }
     paths_ordered[[length(paths_ordered)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
@@ -211,16 +209,14 @@ filter_paths <- function(graph, from, to, weight, filter, paths = NULL){
     weight_sum <- 0
     is_forbiden <- FALSE
     for (edge in path){
-      if(edge_attr(g, weight)[edge] >= filter){
+      if(!is_forbiden && edge_attr(g, weight)[edge] >= filter){
         is_forbiden <- TRUE
       }
       weight_sum <- weight_sum + edge_attr(g, weight)[edge]
     }
     if (is_forbiden){
       black_list[[length(black_list)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
-    }
-    
-    else{
+    } else{
       paths_ordered[[length(paths_ordered)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
     }
     
