@@ -12,32 +12,30 @@ belloc = 209
 #plot(g, layout = mtx,window=FALSE, axes=FALSE, vertex.size=1, cex.main=1.25, cex.lab=1.5, cex.axis=0.75)
 #----------------------------------------------------------
 
-# The calculation of all paths takes time...
+all_shortest_paths11 <- get_k_shortest_paths(graph = g, from = soses, to = belloc, weight = "distance", k=1)
+all_shortest_paths21 <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = "distance", k=1)
 
-all_shortest_paths11 <- ordered_paths(graph = g, from = soses, to = belloc, edge_param = "distance")
-all_shortest_paths21 <- ordered_paths(graph = g, from = juneda, to = menarguens, edge_param = "distance")
-
-all_shortest_paths12 <- ordered_paths(graph = g, from = soses, to = belloc, edge_param = "weight")
-all_shortest_paths22 <- ordered_paths(graph = g, from = juneda, to = menarguens, edge_param = "weight")
-
+all_shortest_paths12 <- get_k_shortest_paths(graph = g, from = soses, to = belloc, weight = "weight", k=1)
+all_shortest_paths22 <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = "weight", k=1)
 
 #--------------------------------PLOT Path Examples--------------------------------
+win <- c(minx,maxx,miny,maxy)
 pdf("Images/PathExamples.pdf",height=12,width=13.5)
 layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
 
-print_path_graph(g, all_shortest_paths12[[1]]$path, color='green')
+print_path_graph(g, all_shortest_paths12[[1]], color='green')
 text(-0.4, -0.4, 'S')
 text(0.9, 0.1, 'B')
 
-print_path_graph(g, all_shortest_paths11[[1]]$path, color='blue')
+print_path_graph(g, all_shortest_paths11[[1]], color='blue')
 text(-0.4, -0.4, 'S')
 text(0.9, 0.1, 'B')
 
-print_path_graph(g, all_shortest_paths22[[1]]$path, color='green')
+print_path_graph(g, all_shortest_paths22[[1]], color='green')
 text(0.65, 0.83, 'M')
 text(0.93, -0.3, 'J')
 
-print_path_graph(g, all_shortest_paths21[[1]]$path, color='blue')
+print_path_graph(g, all_shortest_paths21[[1]], color='blue')
 text(0.65, 0.83, 'M')
 text(0.93, -0.3, 'J')
 

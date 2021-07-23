@@ -63,7 +63,7 @@ get_k_shortest_paths <- function(graph, from, to, weight='weight', k){
     weight = as.numeric(unlist(if (weight=='distance') tmp_df$distance else tmp_df$weight))
   )
   
-  return(k_shortest_paths(g_df, from = soses, to = belloc, k=k))
+  return(k_shortest_paths(g_df, from = from, to = to, k=k))
 }
 
 
@@ -279,10 +279,14 @@ print_path_graph <- function(g, path, color){
   
   mtx = matrix(cbind(vertex_attr(g)$V1, vertex_attr(g)$V2), ncol=2)
   plot(g, layout = mtx, 
-       vertex.size=3, vertex.color=vcol, vertex.label="",
+       vertex.size=3, 
+       vertex.color=vcol, 
+       #vertex.frame.color=vcol,
+       mark.border=NA,
+       vertex.label="",
        edge.color=ecol,
        window=FALSE, axes=FALSE)
-  box()
+  rect(-1,-1,1,1,border="black",lwd=2)
 }
 
 
