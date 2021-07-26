@@ -3,6 +3,7 @@ require(igraph)
 library(roxygen2)
 library(spatstat)
 library(yenpathy)
+library(parallel)
 
 
 #' Gives all the shortest paths lenght between each pair of nodes of the given graph (network)
@@ -182,22 +183,23 @@ ordered_paths <- function(graph, from, to, weight){
 }
 
 
+
 #' Get all the paths between two nodes ordered from less to more weight.
 #' All paths that contains edges with weight greater to the specified 
 #' in the function are saved in another list.
 #' 
-#' @name filter_paths
+#' @name filter_paths_old
 #' @param graph The graph on which calculates the paths
 #' @param from Source node.
 #' @param to Ending node.
 #' @param weight The weight to calculate the shortests paths, can be 'weight' or 'distance'
-#' @param filter Limit weight that an edge of a path can contain
+#' @param filter <array> Weight limits that an edge of a path can contain
 #' @param paths The paths that want to be filtered, if it's empty, will calculate all paths
 #' @return list of lists containing the all the paths ordered by weight
 #' and another identical list but with the paths with edges that has 
 #' the sepecified limit weight or greater.
 #' 
-filter_paths <- function(graph, from, to, weight, filter, paths = NULL){
+filter_paths_old <- function(graph, from, to, weight, filter, paths = NULL){
   if (is.null(paths)){
     paths <- all_simple_paths(g, from=from, to=to)
   }
@@ -238,6 +240,72 @@ filter_paths <- function(graph, from, to, weight, filter, paths = NULL){
   return(list(paths = paths_ordered[order(sapply(paths_ordered,'[[',1))]))
   # return(list(paths = paths_ordered[order(sapply(paths_ordered,'[[',1))], 
   #             black_list = black_list[order(sapply(black_list,'[[',1))]))
+}
+
+
+#' Get all the paths between two nodes ordered from less to more weight.
+#' All paths that contains edges with weight greater to the specified 
+#' in the function are saved in another list.
+#' 
+#' @name filter_paths
+#' @param graph The graph on which calculates the paths
+#' @param from Source node.
+#' @param to Ending node.
+#' @param weight The weight to calculate the shortests paths, can be 'weight' or 'distance'
+#' @param filters <array> Weight limits that an edge of a path can contain
+#' @param paths The paths that want to be filtered, if it's empty, will calculate all paths
+#' @return list of lists containing the all the paths ordered by weight
+#' and another identical list but with the paths with edges that has 
+#' the sepecified limit weight or greater.
+#' 
+filter_paths <- function(graph, from, to, weight, filters, paths = NULL){
+  paths_ordered <- vector(mode="list", length=length(filters))
+  names(paths_ordered) <- filters
+  filters <- as.numeric(unlist(filters)) # transform strings to integuers
+  is_forbiden <- FALSE
+  
+  if(weight == 'distance'){
+    max_parameter  = max(E(g)$distance)
+  }else{
+    max_parameter = max(E(g)$weight)
+  }
+  
+  if (is.null(paths)){
+    paths <- all_simple_paths(g, from=from, to=to)
+  }
+  
+  
+  for(path in paths){
+    weight_sum <- 0
+    is_forbiden <- TRUE
+    filters_idx <- 1
+    
+    for(percent in filters){
+      if(weight == 'distance'){
+        if(max(E(g, path = unlist(path))$distance) < (max_parameter*(percent/100))){
+          weight_sum <- sum(E(g, path = unlist(path))$distance)
+          is_forbiden <- FALSE
+          break
+        }
+      }else{
+        if(max(E(g, path = unlist(path))$weight) < (max_parameter*(percent/100))){
+          weight_sum <- sum(E(g, path = unlist(path))$weight)
+          is_forbiden <- FALSE
+          break
+        }
+      }
+      if(is_forbiden){
+        filters_idx <- filters_idx+1
+      }
+    }
+    
+    if(!is_forbiden){
+      paths_ordered[[toString(filters[filters_idx])]][[length(paths_ordered[[toString(filters[filters_idx])]])+1]] <- 
+        list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
+    }
+  }
+  #return(list(paths = paths_ordered[order(sapply(paths_ordered,'[[',1))]))
+  return(paths_ordered)
 }
 
 

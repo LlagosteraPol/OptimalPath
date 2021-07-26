@@ -1,105 +1,67 @@
+
 source("functions.R")
-library(ggplot2)
-library(latticeExtra)
 
-load(file="DB/RData/Linear_pixel_final_18_Juny_2021_ultima_copia.RData")
+#load(file="DB/RData/JunMen_allPaths_18_Jul_2021.RData")
 
-plot.lpp.lines2 <- function(LNnew,seg_m,width_line=0.1){
+juneda = 63
+soses = 161
+menarguens = 197
+belloc = 209
+
+
+max_distance  = max(E(g)$distance)
+max_accidents = max(E(g)$weight)
+#sos_bell_paths <- all_simple_paths(g, from=soses, to=belloc)
+
+
+filter_paths_test <- function(graph, from, to, weight, filters, paths = NULL){
+  paths_ordered <- vector(mode="list", length=length(filters))
+  names(paths_ordered) <- filters
+  filters <- as.numeric(unlist(filters)) # transform strings to integuers
+  is_forbiden <- FALSE
   
-  x0<-c();y0<-c();x1<-c();y1<-c()
-  for(i in 1:LNnew$lines$n){
-    x0[i]<-LNnew$lines$ends$x0[i]
-    y0[i]<-LNnew$lines$ends$y0[i]
-    x1[i]<-LNnew$lines$ends$x1[i]
-    y1[i]<-LNnew$lines$ends$y1[i]
+  if(weight == 'distance'){
+    max_parameter  = max(E(g)$distance)
+  }else{
+    max_parameter = max(E(g)$weight)
   }
   
-  #generar punts
-  j1<-0;x<-c();y<-c();mk<-c()
-  for(i in 1:LNnew$lines$n){
-    m<-(y1[i]-y0[i])/(x1[i]-x0[i])
-    a<-y0[i]-m*x0[i]
-    for(j in 1:100){
-      j1<-j1+1
-      x[j1]<-runif(1,min(x0[i],x1[i]),max(x0[i],x1[i]))
-      y[j1]<-m*x[j1]+a
-      mk[j1]<-seg_m[i]
+  if (is.null(paths)){
+    paths <- all_simple_paths(g, from=from, to=to)
+  }
+  
+  
+  for(path in paths){
+    weight_sum <- 0
+    is_forbiden <- TRUE
+    filters_idx <- 1
+
+    for(percent in filters){
+      if(weight == 'distance'){
+        if(max(E(g, path = unlist(path))$distance) < (max_parameter*(percent/100))){
+          weight_sum <- sum(E(g, path = unlist(path))$distance)
+          is_forbiden <- FALSE
+          break
+        }
+      }else{
+        if(max(E(g, path = unlist(path))$weight) < (max_parameter*(percent/100))){
+          weight_sum <- sum(E(g, path = unlist(path))$weight)
+          is_forbiden <- FALSE
+          break
+        }
+      }
+      if(is_forbiden){
+        filters_idx <- filters_idx+1
+      }
+    }
+
+    if(!is_forbiden){
+      paths_ordered[[toString(filters[filters_idx])]][[length(paths_ordered[[toString(filters[filters_idx])]])+1]] <- 
+        list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
     }
   }
-  mk2 <- ifelse(mk==0,NA,mk)
-  pppp<-ppp(x,y,marks=mk,window=LNnew$window)
-  t_i <- as.im(pppp)
-  t_i[t_i==0] <- NA
-  #t_i <- as.im(pppp)
-  #t_i2 <- image(x=x, y=y, z=mk, col = hcl.colors(100, "terrain"), axes = FALSE)
-  
-  #plot(t_i2, image=TRUE, col= topo.colors(100))
-  #plot(intensity(pppp), pch=19,cex=width_line, image=TRUE, las=1, main="", col= topo.colors(100), add=TRUE)
-  plot(LNnew, main="")
-  
-  plot(t_i, main="", col=heat.colors(20,alpha = 1))
-  #plot(pppp, pch=19,cex=width_line,col=topo.colors(100),add=TRUE, main="", image=TRUE)
-  #rect(LNnew$window$xrange[1],LNnew$window$yrange[1],LNnew$window$xrange[2],LNnew$window$yrange[2],
-      # border="black",lwd=1)
-}
-pdf("Images/FigTest.pdf",height=6,width=13.5)
-plot.lpp.lines2(LNnew,seg_m, 0.05) ##per ensenyar els pesos per lines
-dev.off()
-
-
-
-plot.lpp.lines3 <- function(LNnew,seg_m,width_line=0.1){
-  
-  x0<-c();y0<-c();x1<-c();y1<-c()
-  for(i in 1:LNnew$lines$n){
-    x0[i]<-LNnew$lines$ends$x0[i]
-    y0[i]<-LNnew$lines$ends$y0[i]
-    x1[i]<-LNnew$lines$ends$x1[i]
-    y1[i]<-LNnew$lines$ends$y1[i]
-  }
-  
-  #generar punts
-  j1<-0;x<-c();y<-c();mk<-c()
-  for(i in 1:LNnew$lines$n){
-    m<-(y1[i]-y0[i])/(x1[i]-x0[i])
-    a<-y0[i]-m*x0[i]
-    for(j in 1:100){
-      j1<-j1+1
-      x[j1]<-runif(1,min(x0[i],x1[i]),max(x0[i],x1[i]))
-      y[j1]<-m*x[j1]+a
-      mk[j1]<-seg_m[i]
-    }
-  }
-  mk2 <- ifelse(mk==0,NA,mk)
-  pppp<-ppp(x,y,marks=mk,window=LNnew$window)
-  t_i <- as.im(pppp)
-  t_i[t_i==0] <- NA
-  #t_i <- as.im(pppp)
-  #t_i2 <- image(x=x, y=y, z=mk, col = hcl.colors(100, "terrain"), axes = FALSE)
-  
-  ppp_df<-as.data.frame(pppp)
-  
-  
-
-  spplot(ppp_df) 
-
-  
-  
-  
-  #ggplot(ppp_df)
-  #ggplot() +  geom_point( data = ppp_df, aes(x=x, y=y)) +scale_fill_gradient(low="white", high="blue") 
-  #ggplot(ppp_df, aes(x=x,y=y)) + geom_point(alpha=0.2, aes(color=mk)) + scale_color_gradient(low = "red", high = "yellow")
-  #ggplot(ppp_df, aes(x = x, y = y))+theme(panel.background = element_rect(fill='white', colour='red'))
-  #plot(t_i2, image=TRUE, col= topo.colors(100))
-  #plot(intensity(pppp), pch=19,cex=width_line, image=TRUE, las=1, main="", col= topo.colors(100), add=TRUE)
-  #plot(LNnew, main="") 
-  
-  #plot(t_i, main="", col=heat.colors(20,alpha = 0.1))
-  #plot(pppp, pch=19,cex=width_line,col=topo.colors(100),add=TRUE, main="", image=TRUE)
-  #rect(LNnew$window$xrange[1],LNnew$window$yrange[1],LNnew$window$xrange[2],LNnew$window$yrange[2],
-  # border="black",lwd=1)
+  #return(list(paths = paths_ordered[order(sapply(paths_ordered,'[[',1))]))
+  return(paths_ordered)
 }
 
-
-
-plot.lpp.lines3(LNnew,seg_m, 0.05) ##per ensenyar els pesos per lines
+filtered_paths <- filter_paths_test(graph=g, from=soses, to=menarguens, weight='distance', filters=c(10,25,50,75), paths = jun_men_paths)
