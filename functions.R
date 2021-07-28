@@ -80,21 +80,21 @@ get_k_shortest_paths <- function(graph, from, to, weight='weight', k){
 #' related to them.
 #' 
 paths_info <- function(graph, from, to){
-  all_paths <- all_simple_paths(g, from=from, to=to)
+  all_paths <- all_simple_paths(graph, from=from, to=to)
   
   ipaths <- list()
   
   for (path in all_paths){
     
-    distance_sum <- sum(E(g, path = unlist(path))$distance)
+    distance_sum <- sum(E(graph, path = unlist(path))$distance)
 
-    weight_sum <- sum(E(g, path = unlist(path))$weight)
+    weight_sum <- sum(E(graph, path = unlist(path))$weight)
     
-    t_weight_sum <- sum(E(g, path = unlist(path))$t_weight)
+    t_weight_sum <- sum(E(graph, path = unlist(path))$t_weight)
     
-    t_distance_sum <- sum(E(g, path = unlist(path))$t_distance)
+    t_distance_sum <- sum(E(graph, path = unlist(path))$t_distance)
     
-    all_sum <- sum(E(g, path = unlist(path))$all)
+    all_sum <- sum(E(graph, path = unlist(path))$all)
       
     ipaths[[length(ipaths)+1]] <- list(from = from, to=to, path = as.numeric(unlist(as_ids(path))), 
                                        distance = distance_sum, 
@@ -163,19 +163,19 @@ rate_paths <- function(graph, from, to){
 #' @return list of lists containing the all the paths ordered by weight.
 #' 
 ordered_paths <- function(graph, from, to, weight){
-  all_paths <- all_simple_paths(g, from=from, to=to)
+  all_paths <- all_simple_paths(graph, from=from, to=to)
   
   paths_ordered <- list()
   
   for (path in all_paths){
     if(weight == "distance"){
-      weight_sum <- sum(E(g, path = unlist(path))$distance)
+      weight_sum <- sum(E(graph, path = unlist(path))$distance)
     }
     else if (weight == "weight"){
-      weight_sum <- sum(E(g, path = unlist(path))$weight)
+      weight_sum <- sum(E(graph, path = unlist(path))$weight)
     }
     else{
-      weight_sum <- sum(E(g, path = unlist(path))$all)
+      weight_sum <- sum(E(graph, path = unlist(path))$all)
     }
     paths_ordered[[length(paths_ordered)+1]] <- list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
   }
@@ -201,7 +201,7 @@ ordered_paths <- function(graph, from, to, weight){
 #' 
 filter_paths_old <- function(graph, from, to, weight, filter, paths = NULL){
   if (is.null(paths)){
-    paths <- all_simple_paths(g, from=from, to=to)
+    paths <- all_simple_paths(graph, from=from, to=to)
   }
   
   
@@ -217,7 +217,7 @@ filter_paths_old <- function(graph, from, to, weight, filter, paths = NULL){
         is_forbiden <- TRUE
         break
       }
-      weight_sum <- weight_sum + edge_attr(g, weight)[edge]
+      weight_sum <- weight_sum + edge_attr(graph, weight)[edge]
     }
     
     if(!is_forbiden){
@@ -265,13 +265,13 @@ filter_paths <- function(graph, from, to, weight, filters, paths = NULL){
   is_forbiden <- FALSE
   
   if(weight == 'distance'){
-    max_parameter  = max(E(g)$distance)
+    max_parameter  = max(E(graph)$distance)
   }else{
-    max_parameter = max(E(g)$weight)
+    max_parameter = max(E(graph)$weight)
   }
   
   if (is.null(paths)){
-    paths <- all_simple_paths(g, from=from, to=to)
+    paths <- all_simple_paths(graph, from=from, to=to)
   }
   
   
@@ -282,14 +282,14 @@ filter_paths <- function(graph, from, to, weight, filters, paths = NULL){
     
     for(percent in filters){
       if(weight == 'distance'){
-        if(max(E(g, path = unlist(path))$distance) < (max_parameter*(percent/100))){
-          weight_sum <- sum(E(g, path = unlist(path))$distance)
+        if(max(E(graph, path = unlist(path))$distance) < (max_parameter*(percent/100))){
+          weight_sum <- sum(E(graph, path = unlist(path))$distance)
           is_forbiden <- FALSE
           break
         }
       }else{
-        if(max(E(g, path = unlist(path))$weight) < (max_parameter*(percent/100))){
-          weight_sum <- sum(E(g, path = unlist(path))$weight)
+        if(max(E(graph, path = unlist(path))$weight) < (max_parameter*(percent/100))){
+          weight_sum <- sum(E(graph, path = unlist(path))$weight)
           is_forbiden <- FALSE
           break
         }
@@ -306,6 +306,23 @@ filter_paths <- function(graph, from, to, weight, filters, paths = NULL){
   }
   #return(list(paths = paths_ordered[order(sapply(paths_ordered,'[[',1))]))
   return(paths_ordered)
+}
+
+
+#' Delete all the edges with weight equal to or greater than the specified amount
+#'
+#' @name filter_graph
+#' @param graph The graph on which calculates the paths
+#' @param filter Maximum weight that the edges can contain
+#' @param weight Weight type, can be 'distance' or 'weight'
+#' @return graph without the edges with weight equal or greater than the given filter
+#' 
+filter_graph <- function(graph, filter, weight){
+  if(weight == 'distance'){
+    return(delete.edges(graph, which(E(graph)$distance==filter)))  
+  }else{
+    return(delete.edges(graph, which(E(graph)$weight==filter)))    
+  }
 }
 
 
@@ -328,25 +345,25 @@ print_path_ppp <- function(ppp_obj, path){
 #' as well as the edges
 #' 
 #' @name print_path_graph
-#' @param g <igraph> Graph object
+#' @param graph <igraph> Graph object
 #' @param path Path to be plotted
 #' @param color <string> Color of the path 
 #' @return a plot of the map with the given path
 #' 
-print_path_graph <- function(g, path, color){
-  vcol <- rep("black", vcount(g))
+print_path_graph <- function(graph, path, color){
+  vcol <- rep("black", vcount(graph))
   vcol[path] <- color
   vcol[path[1]] <- "sandybrown" # Path first node color
   vcol[path[length(path)]] <- "red" # Path last node color
   
-  ecol <- rep("black", ecount(g))
-  ecol[E(g, path=path)] <- color
+  ecol <- rep("black", ecount(graph))
+  ecol[E(graph, path=path)] <- color
 
-  E(g)$width <- 1
-  E(g, path=path)$width <- 3
+  E(graph)$width <- 1
+  E(graph, path=path)$width <- 3
   
-  mtx = matrix(cbind(vertex_attr(g)$V1, vertex_attr(g)$V2), ncol=2)
-  plot(g, layout = mtx, 
+  mtx = matrix(cbind(vertex_attr(graph)$V1, vertex_attr(graph)$V2), ncol=2)
+  plot(graph, layout = mtx, 
        vertex.size=3, 
        vertex.color=vcol, 
        #vertex.frame.color=vcol,

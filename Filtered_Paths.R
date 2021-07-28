@@ -10,8 +10,9 @@ belloc = 209
 percents <- c(10,25,50,75)
 max_distance  = max(E(g)$distance)
 max_accidents = max(E(g)$weight)
-sos_bell_paths <- all_simple_paths(g, from=soses, to=belloc)
-jun_men_paths  <- all_simple_paths(g, from=juneda, to=menarguens)
+#sos_bell_paths <- all_simple_paths(g, from=soses, to=belloc)
+#jun_men_paths  <- all_simple_paths(g, from=juneda, to=menarguens)
+load("~/RProjects/OptimalPath/DB/RData/JunMen_allPaths_18_Jul_2021.RData")
 
 
 sos_bell_dfilter <- filter_paths(graph = g, from = soses, to = belloc, weight='distance', filter = percents, paths = sos_bell_paths)
