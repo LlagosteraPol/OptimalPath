@@ -118,6 +118,10 @@ paths_info <- function(graph, from, to){
 rate_paths <- function(graph, from, to){
   ipaths <- paths_info(graph = graph, from = from, to = to)
   
+  if (length(ipaths) == 0){
+    return(ipaths)
+  }
+  
   # distance order
   ipaths <- ipaths[order(sapply(ipaths,'[[',4))]
   for(i in 1:length(ipaths)){
@@ -319,9 +323,11 @@ filter_paths <- function(graph, from, to, weight, filters, paths = NULL){
 #' 
 filter_graph <- function(graph, filter, weight){
   if(weight == 'distance'){
-    return(delete.edges(graph, which(E(graph)$distance==filter)))  
+    max_distance  = max(E(graph)$distance)
+    return(delete.edges(graph, which(E(graph)$distance>=(max_distance*(filter/100)))))  
   }else{
-    return(delete.edges(graph, which(E(graph)$weight==filter)))    
+    max_weight  = max(E(graph)$weight)
+    return(delete.edges(graph, which(E(graph)$weight>=(max_weight*(filter/100)))))    
   }
 }
 

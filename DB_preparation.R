@@ -12,8 +12,8 @@ Dades_segments<-data.frame(V1=LNnew$from, V2=LNnew$to)
 Dades_pesos<-data.frame(V1=seg_m)
 Dades_distancies<-data.frame(V1=length_seg_entre_cross)
 
-a = 0.2
-b = 0.8
+a = 0.5
+b = 0.5
 
 
 transformed_accIntensities <- data.frame(V1=mapply(FUN = `/`, Dades_pesos, 
