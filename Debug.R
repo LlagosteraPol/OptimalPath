@@ -1,67 +1,48 @@
+vertices_data <- data.frame(ID=c(1,2,3,4,5,6,7,8,9,10))
 
-source("functions.R")
+edges_data <- cbind(c(1,  1,  1,  2,  2,  2,  2,  3,  3,  4,  4,  5,  5,  6,  7,  7,  8,  9), 
+                    c(2,  4,  6,  3,  4,  5,  7,  5,  8,  6,  7,  7,  8,  9,  9,  10, 10, 10))
 
-#load(file="DB/RData/JunMen_allPaths_18_Jul_2021.RData")
+intensity_data <-   c(3,  7,  2,  8,  6,  10, 5,  10, 3,  4,  8,  6,  2,  1,  9,  8,  7,  1)
+distance_data <-    c(12, 31, 38, 15, 28, 29, 32, 40, 22, 19, 24, 31, 19, 33, 39, 24, 31, 17)
 
-juneda = 63
-soses = 161
-menarguens = 197
-belloc = 209
+segments_info <- cbind(edges_data, intensity_data) 
+segments_info <- cbind(segments_info, distance_data) 
+colnames(segments_info) <- c("from","to","intensity","distance")
+
+edges_df = data.frame(from = segments_info[, 'from'],
+                      to = segments_info[, 'to'],
+                      intensity = segments_info[, 'intensity'],
+                      distance = segments_info[, 'distance'])
 
 
-max_distance  = max(E(g)$distance)
-max_accidents = max(E(g)$weight)
-#sos_bell_paths <- all_simple_paths(g, from=soses, to=belloc)
+g_t = graph_from_data_frame(edges_df, directed=FALSE, vertices=vertices_data)
+
+f = 1
+t = 10
 
 
-filter_paths_test <- function(graph, from, to, weight, filters, paths = NULL){
-  paths_ordered <- vector(mode="list", length=length(filters))
-  names(paths_ordered) <- filters
-  filters <- as.numeric(unlist(filters)) # transform strings to integuers
-  is_forbiden <- FALSE
+all_paths_t <- all_simple_paths(g_t, from=f, to=t)
+ipaths_t <- list()
+for (path in all_paths_t){
   
-  if(weight == 'distance'){
-    max_parameter  = max(E(g)$distance)
-  }else{
-    max_parameter = max(E(g)$weight)
-  }
+  intensity_sum <- sum(E(g_t, path = unlist(path))$intensity)
   
-  if (is.null(paths)){
-    paths <- all_simple_paths(g, from=from, to=to)
-  }
+  distance_sum <- sum(E(g_t, path = unlist(path))$distance)
   
-  
-  for(path in paths){
-    weight_sum <- 0
-    is_forbiden <- TRUE
-    filters_idx <- 1
-
-    for(percent in filters){
-      if(weight == 'distance'){
-        if(max(E(g, path = unlist(path))$distance) < (max_parameter*(percent/100))){
-          weight_sum <- sum(E(g, path = unlist(path))$distance)
-          is_forbiden <- FALSE
-          break
-        }
-      }else{
-        if(max(E(g, path = unlist(path))$weight) < (max_parameter*(percent/100))){
-          weight_sum <- sum(E(g, path = unlist(path))$weight)
-          is_forbiden <- FALSE
-          break
-        }
-      }
-      if(is_forbiden){
-        filters_idx <- filters_idx+1
-      }
-    }
-
-    if(!is_forbiden){
-      paths_ordered[[toString(filters[filters_idx])]][[length(paths_ordered[[toString(filters[filters_idx])]])+1]] <- 
-        list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
-    }
-  }
-  #return(list(paths = paths_ordered[order(sapply(paths_ordered,'[[',1))]))
-  return(paths_ordered)
+  ipaths_t[[length(ipaths_t)+1]] <- list(from = f, to=t, path = as.numeric(unlist(as_ids(path))), 
+                                         intensity = intensity_sum, 
+                                         distance = distance_sum)
 }
 
-filtered_paths <- filter_paths_test(graph=g, from=soses, to=menarguens, weight='distance', filters=c(10,25,50,75), paths = jun_men_paths)
+# distance order
+ipaths_t <- ipaths_t[order(sapply(ipaths_t,'[[',4))]
+for(i in 1:length(ipaths_t)){
+  ipaths_t[[i]] <- c(ipaths_t[[i]], n_distance=i)
+}
+
+#intensity order
+ipaths_t <- ipaths_t[order(sapply(ipaths_t,'[[',5))]
+for(i in 1:length(ipaths_t)){
+  ipaths_t[[i]] <- c(ipaths_t[[i]], n_weight=i)
+}
