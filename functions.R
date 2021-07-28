@@ -309,6 +309,23 @@ filter_paths <- function(graph, from, to, weight, filters, paths = NULL){
 }
 
 
+#' Delete all the edges with weight equal to or greater than the specified amount
+#'
+#' @name filter_graph
+#' @param graph The graph on which calculates the paths
+#' @param filter Maximum weight that the edges can contain
+#' @param weight Weight type, can be 'distance' or 'weight'
+#' @return graph without the edges with weight equal or greater than the given filter
+#' 
+filter_graph <- function(graph, filter, weight){
+  if(weight == 'distance'){
+    return(delete.edges(graph, which(E(graph)$distance==filter)))  
+  }else{
+    return(delete.edges(graph, which(E(graph)$weight==filter)))    
+  }
+}
+
+
 #' Print the map of the given ppp object with the given path as green nodes, it also print the other nodes as red
 #' 
 #' @name print_path_ppp
