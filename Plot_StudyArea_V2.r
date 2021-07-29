@@ -125,7 +125,7 @@ labels = c(92,92+10,92+20,92+30,92+40,92+50),
 rect(minx,miny,maxx,maxy)
 points(ACC_win$x,ACC_win$y,pch=20,col=rgb(0,0,0,alpha=alpha1),cex=1.2)
 mtext("Km", at=xmin+97000, line = -19.5, cex=0.90,las=2)
-mtext("Km", at=xmin+130000, line = -35, cex=0.90)
+mtext("Km", at=xmin+130000, line = -36.5, cex=0.90)
 
 dev.off()
 
