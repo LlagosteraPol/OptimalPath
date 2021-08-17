@@ -50,7 +50,7 @@ ACC_win<-ppp(ACC$V1,ACC$V2, window=win)
 
 ###-------------------------------------------Plot Start----------------------------------------------
 
-pdf("Images/StudyArea.pdf",height=6,width=13.5)
+pdf("Images/StudyArea_example.pdf",height=6,width=13.5)
 #layout(matrix(c(1,2,3,3),2,2,byrow=TRUE))
 layout(matrix(c(1,2,3),1,3,byrow=TRUE))
 
@@ -112,7 +112,7 @@ mtext("Km", at=xmin+145000, line = -35, cex=0.90)
 par(mar =0.2+c(3.2, 1.5, 2.2, 5.6))
 
 
-####-----------------------------------Study area (Lleida)----------------------------------------
+####-----------------------------------------Study area-----------------------------------------------
 plot(LNnew, main="",axes=FALSE,col="grey")
 axis(1, at=c(minx, minx+(maxx-minx)/5,minx+2*(maxx-minx)/5,minx+3*(maxx-minx)/5,minx+4*(maxx-minx)/5, maxx), 
 labels = c(106,106+10,106+20,106+30,106+40,106+50),

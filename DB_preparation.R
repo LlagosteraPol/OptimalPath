@@ -7,7 +7,7 @@ source("functions.R")
 load(file="DB/RData/Linear_pixel_final_18_Juny_2021_ultima_copia.RData")
 
 #Importa dades
-Dades_vertex<-data.frame(V1=LNnew$vertices$x, V2=LNnew$vertices$y)
+Dades_vertex<-+data.frame(V1=LNnew$vertices$x, V2=LNnew$vertices$y)
 Dades_segments<-data.frame(V1=LNnew$from, V2=LNnew$to)
 Dades_pesos<-data.frame(V1=seg_m)
 Dades_distancies<-data.frame(V1=length_seg_entre_cross)

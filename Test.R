@@ -192,4 +192,44 @@ for(i in 1:length(ipaths_t)){
 intensity_ordered <- ipaths_t[order(sapply(ipaths_t,'[[',4))]
 distance_ordered <- ipaths_t[order(sapply(ipaths_t,'[[',5))]
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------Rating with 2 variables---------------------------------------------------------------------------------
+load("C:/Users/usuari/RProjects/OptimalPath/DB/RData/Rating_0505_28_july_2021.RData")
+
+safest_jun_men <- list()
+
+
+for (path in jun_men_weight_ordered){
+  if(jun_men_weight_ordered[[1]][5] == path[[5]]){
+    if(length(safest_jun_men) == 0){
+      safest_jun_men <- list(path)
+    }else{
+      safest_jun_men <- rbind(safest_jun_men, list(path))
+    }
+    
+  }else{
+    break
+  }
+}
+safest_jun_men_ordered <- safest_jun_men[order(sapply(safest_jun_men,'[[',4))]
+for (i in 1:length(safest_jun_men_ordered)){print(safest_jun_men_ordered[[i]][["distance"]])}
+
+safest_sos_bell <- list()
+bk = FALSE
+for (path in sos_bell_weight_ordered){
+  if(sos_bell_weight_ordered[[1]][5] == path[[5]]){
+    if(length(safest_sos_bell) == 0){
+      safest_sos_bell <- list(path)
+    }else{
+      safest_sos_bell <- rbind(safest_sos_bell, list(path))
+    }
+    bk = TRUE
+  }else if(bk){
+    break
+  }
+}
+safest_sos_bell_ordered <- safest_sos_bell[order(sapply(safest_sos_bell,'[[',4))]
+for (i in 1:length(safest_sos_bell_ordered)){print(safest_sos_bell_ordered[[i]][["distance"]])}
+
+require(igraph)
+t1 <- E(g, path = safest_jun_men_ordered[[1]]$path)$weight
+t2 <- E(g, path = safest_jun_men_ordered[[2]]$path)$weight
