@@ -2,28 +2,34 @@
 
 
 
-#load("C:/Users/usuari/RProjects/OptimalPath/DB/RData/Rating_0505_28_july_2021.RData")
-
-safest_jun_lst<- list()
-
-tmp <- jun_men_weight_ordered[[1]][5]$weight
-ctr <- 1
-i <- 1
-for (path in jun_men_weight_ordered){
-  if(jun_men_weight_ordered[[i]][5]$weight == tmp){
-    ctr <- ctr + 1
-  }else{
-    tmp <- jun_men_weight_ordered[[i]][5]$weight
-    if(length(safest_jun_lst) == 0){
-      safest_jun_lst <- list(list(amount = ctr, weight = tmp))
-    }else{
-      safest_jun_lst <- rbind(safest_jun_lst, list(list(amount = ctr, weight = tmp)))
-    }
-    ctr <- 1
+paths_info_t <- function(graph, from, to){
+  #all_paths <- all_simple_paths(g, from=soses, to=belloc)
+  
+  ipaths <- list()
+  
+  for (path in all_paths){
+    
+    distance_sum <- sum(E(graph, path = unlist(path))$distance)
+    
+    weight_sum <- sum(E(graph, path = unlist(path))$weight)
+    
+    t_weight_sum <- sum(E(graph, path = unlist(path))$t_weight)
+    
+    t_distance_sum <- sum(E(graph, path = unlist(path))$t_distance)
+    
+    all_sum <- sum(E(graph, path = unlist(path))$all)
+    
+    ipaths[[length(ipaths)+1]] <- list(from = from, to=to, path = as.numeric(unlist(as_ids(path))), 
+                                       distance = distance_sum, 
+                                       weight = weight_sum,
+                                       t_distance = t_distance_sum,
+                                       t_weight = t_weight_sum,
+                                       all = all_sum) 
   }
-  i <- i+1
+  return(ipaths)
 }
 
+sos_bell_test <- paths_info_t(graph = g, from = soses, to = belloc)
 # vertices_data <- data.frame(ID=c(1,2,3,4,5,6,7,8,9,10))
 # 
 # edges_data <- cbind(c(1,  1,  1,  2,  2,  2,  2,  3,  3,  4,  4,  5,  5,  6,  7,  7,  8,  9), 
