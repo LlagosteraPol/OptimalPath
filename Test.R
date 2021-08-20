@@ -235,7 +235,7 @@ t1 <- E(g, path = safest_jun_men_ordered[[1]]$path)$weight
 t2 <- E(g, path = safest_jun_men_ordered[[2]]$path)$weight
 
 #------------------------------------------------------Get sets of pats with same weight---------------------------------------------------------------------------
-load("C:/Users/usuari/RProjects/OptimalPath/DB/RData/Rating_0505_28_july_2021.RData")
+load(file="DB/RData/Rating_0505_28_july_2021.RData")
 
 safest_jun_lst<- list()
 
@@ -256,4 +256,25 @@ for (path in jun_men_weight_ordered){
   }
   i <- i+1
 }
+
+safest_sos_lst<- list()
+
+tmp <- sos_bell_weight_ordered[[1]][5]$weight
+ctr <- 1
+i <- 1
+for (path in sos_bell_weight_ordered){
+  if(sos_bell_weight_ordered[[i]][5]$weight == tmp){
+    ctr <- ctr + 1
+  }else{
+    tmp <- sos_bell_weight_ordered[[i]][5]$weight
+    if(length(safest_sos_lst) == 0){
+      safest_sos_lst <- list(list(amount = ctr, weight = tmp))
+    }else{
+      safest_sos_lst <- rbind(safest_sos_lst, list(list(amount = ctr, weight = tmp)))
+    }
+    ctr <- 1
+  }
+  i <- i+1
+}
+
 
