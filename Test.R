@@ -233,3 +233,27 @@ for (i in 1:length(safest_sos_bell_ordered)){print(safest_sos_bell_ordered[[i]][
 require(igraph)
 t1 <- E(g, path = safest_jun_men_ordered[[1]]$path)$weight
 t2 <- E(g, path = safest_jun_men_ordered[[2]]$path)$weight
+
+#------------------------------------------------------Get sets of pats with same weight---------------------------------------------------------------------------
+load("C:/Users/usuari/RProjects/OptimalPath/DB/RData/Rating_0505_28_july_2021.RData")
+
+safest_jun_lst<- list()
+
+tmp <- jun_men_weight_ordered[[1]][5]$weight
+ctr <- 1
+i <- 1
+for (path in jun_men_weight_ordered){
+  if(jun_men_weight_ordered[[i]][5]$weight == tmp){
+    ctr <- ctr + 1
+  }else{
+    tmp <- jun_men_weight_ordered[[i]][5]$weight
+    if(length(safest_jun_lst) == 0){
+      safest_jun_lst <- list(list(amount = ctr, weight = tmp))
+    }else{
+      safest_jun_lst <- rbind(safest_jun_lst, list(list(amount = ctr, weight = tmp)))
+    }
+    ctr <- 1
+  }
+  i <- i+1
+}
+

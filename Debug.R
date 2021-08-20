@@ -2,31 +2,26 @@
 
 
 
+#load("C:/Users/usuari/RProjects/OptimalPath/DB/RData/Rating_0505_28_july_2021.RData")
 
-safest_jun_men <- list()
-safest_sos_bell <- list()
+safest_jun_lst<- list()
 
-
+tmp <- jun_men_weight_ordered[[1]][5]$weight
+ctr <- 1
+i <- 1
 for (path in jun_men_weight_ordered){
-  if(jun_men_weight_ordered[[1]][5] == path[[5]]){
-    print(path[[5]])
-    if(length(safest_jun_men) == 0){
-      safest_jun_men <- path
+  if(jun_men_weight_ordered[[i]][5]$weight == tmp){
+    ctr <- ctr + 1
+  }else{
+    tmp <- jun_men_weight_ordered[[i]][5]$weight
+    if(length(safest_jun_lst) == 0){
+      safest_jun_lst <- list(list(amount = ctr, weight = tmp))
     }else{
-      safest_jun_men <- list(safest_jun_men, path)
+      safest_jun_lst <- rbind(safest_jun_lst, list(list(amount = ctr, weight = tmp)))
     }
-    
-  }else{
-    break
+    ctr <- 1
   }
-}
-
-for (path in sos_bell_weight_ordered){
-  if(sos_bell_weight_ordered[[1]][5] == path[[5]]){
-    safest_sos_bell <- list(safest_sos_bell, path)
-  }else{
-    break
-  }
+  i <- i+1
 }
 
 # vertices_data <- data.frame(ID=c(1,2,3,4,5,6,7,8,9,10))
