@@ -68,6 +68,7 @@ dev.off()
 
 #-------------------------------Plot map with projected accidents-------------------------------
 pdf("Images/Accidents.pdf",height=8,width=8)
+par(mar = c(1, 3, 1, 1)) # Reduce margins
 
 ##Passar de class linnet to class psp
 pv.map.psp<-as.psp(LN_vertex)

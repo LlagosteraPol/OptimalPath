@@ -20,8 +20,16 @@ all_shortest_paths22 <- get_k_shortest_paths(graph = g, from = juneda, to = mena
 
 #--------------------------------PLOT Path Examples--------------------------------
 win <- c(minx,maxx,miny,maxy)
-pdf("Images/PathExamples.pdf",height=12,width=13.5)
-layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
+pdf("Images/PathExamples.pdf",height=12,width=11.9)
+#layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
+
+# mar: bottom, left, top, and right.
+# Reduce margins
+par(mfrow = c(2, 2),     # 2x2 layout
+    oma = c(0, 0, 0, 0), # no row space at margins
+    mar = c(0, 0, 0, 0), # no space to separate plots
+    xpd = NA)            # allow content to protrude into outer margin (and beyond)
+
 
 print_path_graph(g, all_shortest_paths12[[1]], color='green')
 text(-0.4, -0.4, 'S')
