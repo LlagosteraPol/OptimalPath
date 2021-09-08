@@ -61,8 +61,8 @@ axis(2, at=c(ymin_lld,
      pos=c(xmin_lld, ymin_lld),cex.axis=1.40, mgp=c(0, 0.7, 0),las=2)
 rect(xmin_lld,ymin_lld,xmax_lld,ymax_lld,border="black",lwd=2)
 #Axis
-mtext("Km", at=xmin_lld-7000, line = -16, cex=0.90,las=2)
-mtext("Km", at=xmin_lld+((xmax_lld-xmin_lld)/2), line = -34, cex=0.90)
+mtext("Km", at=xmin_lld-7000, line = -16, las=2, cex=1.50)
+mtext("Km", at=xmin_lld+((xmax_lld-xmin_lld)/2), line = -34, cex=1.50)
 
 dev.off()
 
