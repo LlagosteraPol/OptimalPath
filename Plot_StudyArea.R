@@ -133,9 +133,13 @@ par(mar =0.2+c(3.2, 1.5, 2.2, 5.6))
 #L'objected lpp (network més point pattern) és l'objecte LN_pp
 plot(LN_pp,axes=FALSE, main="")
 
-propx = round((xmin_lld - xmin_cat) / 1000) # Proporciò referent a Catalunya en km arrodonit (per l'eix x dels labels)
-propy = round((ymin_lld - ymin_cat) / 1000) # Igual pro per l'eix y dels labels
-gap = 10
+# Proporciò referent a Catalunya en km arrodonit (per l'eix x dels labels)
+propx_min = round((xmin_lld - xmin_cat) / 1000) 
+propx_max = round((xmax_lld - xmin_cat) / 1000) 
+
+# Igual pro per l'eix y dels labels
+propy_min = round((ymin_lld - ymin_cat) / 1000) 
+propy_max = round((ymax_lld - ymin_cat) / 1000) 
 
 par(mar =0.2+c(4.2, 1.5, 1.2, 5.6))
 #plot(LNnew, main="",axes=FALSE,col="grey")
@@ -145,7 +149,12 @@ axis(1, at=c(xmin_lld,
              xmin_lld + 3*(xmax_lld-xmin_lld)/5,
              xmin_lld + 4*(xmax_lld-xmin_lld)/5,
              xmax_lld),
-     labels = c(propx,propx+(gap*1),propx+(gap*2),propx+(gap*3),propx+(gap*4),propx+(gap*5)),
+     labels = c(propx_min,
+                propx_min+(propx_max-propx_min)/5,
+                propx_min+2*(propx_max-propx_min)/5,
+                propx_min+3*(propx_max-propx_min)/5,
+                propx_min+4*(propx_max-propx_min)/5,
+                propx_max),
      pos=c(ymin_lld, xmin_lld),cex.axis=1.40, mgp=c(0, 0.7, 0))
 
 axis(2, at=c(ymin_lld,
@@ -154,12 +163,17 @@ axis(2, at=c(ymin_lld,
              ymin_lld + 3*(ymax_lld-ymin_lld)/5,
              ymin_lld + 4*(ymax_lld-ymin_lld)/5,
              ymax_lld),
-    labels = c(propy,propy+(gap*1),propy+(gap*2),propy+(gap*3),propy+(gap*4),propy+(gap*5)),
+    labels = c(propy_min,
+               propy_min+(propy_max-propy_min)/5,
+               propy_min+2*(propy_max-propy_min)/5,
+               propy_min+3*(propy_max-propy_min)/5,
+               propy_min+4*(propy_max-propy_min)/5,
+               propy_max),
     pos=c(xmin_lld, ymin_lld),cex.axis=1.40, mgp=c(0, 0.7, 0),las=2)
 rect(xmin_lld,ymin_lld,xmax_lld,ymax_lld,border="black",lwd=2)
 #Axis
-mtext("Km", at=xmin_lld-7000, line = -20.5, cex=0.90,las=2)
-mtext("Km", at=xmin_lld+((xmax_lld-xmin_lld)/2), line = -36.6, cex=0.90)
+mtext("Km", at=xmin_lld-7000, line = -22, cex=0.90,las=2)
+mtext("Km", at=xmin_lld+((xmax_lld-xmin_lld)/2), line = -37.5, cex=0.90)
 
 dev.off()
 
