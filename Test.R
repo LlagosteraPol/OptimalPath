@@ -237,12 +237,15 @@ t2 <- E(g, path = safest_jun_men_ordered[[2]]$path)$weight
 #------------------------------------------------------Get sets of pats with same weight---------------------------------------------------------------------------
 load(file="DB/RData/Rating_0505_28_july_2021.RData")
 
+enough = 10000
+
 safest_jun_lst<- list()
 
 tmp <- jun_men_weight_ordered[[1]][5]$weight
-ctr <- 1
+ctr <- 0
 i <- 1
 for (path in jun_men_weight_ordered){
+  if( i == enough) {break}
   if(jun_men_weight_ordered[[i]][5]$weight == tmp){
     ctr <- ctr + 1
   }else{
@@ -260,9 +263,10 @@ for (path in jun_men_weight_ordered){
 safest_sos_lst<- list()
 
 tmp <- sos_bell_weight_ordered[[1]][5]$weight
-ctr <- 1
+ctr <- 0
 i <- 1
 for (path in sos_bell_weight_ordered){
+  if( i == enough) {break}
   if(sos_bell_weight_ordered[[i]][5]$weight == tmp){
     ctr <- ctr + 1
   }else{
@@ -276,5 +280,3 @@ for (path in sos_bell_weight_ordered){
   }
   i <- i+1
 }
-
-

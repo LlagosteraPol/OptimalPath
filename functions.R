@@ -2,9 +2,41 @@ library(dils)
 require(igraph)
 library(roxygen2)
 library(spatstat)
-library(yenpathy)
+#library(yenpathy)
 library(parallel)
 
+
+#' Calculates the wheighted intensities and distances based on formula W(l_i)
+#' 
+#' @name w_li
+#' @param intensities Dataframe containing all the accident intensities
+#' @param distances Dataframe containing all the distances
+#' @param a weighting for intensities (a+b=1)
+#' @param b weighting for distances (a+b=1)
+#' @return list with weighted intensities and distances
+#' 
+weighted_data <- function(intensities, distances, a, b){
+  
+  transformed_accIntensities <- data.frame(V1=mapply(FUN = `-`, intensities, 
+                                                     min(intensities), SIMPLIFY = FALSE))
+  
+  transformed_accIntensities <- data.frame(V1=mapply(FUN = `/`, transformed_accIntensities, 
+                                                     (max(intensities)-min(intensities)), SIMPLIFY = FALSE))
+  
+  transformed_accIntensities <- data.frame(V1=mapply(FUN = `*`, transformed_accIntensities, 
+                                                     a, SIMPLIFY = FALSE))
+  
+  transformed_distances <- data.frame(V1=mapply(FUN = `-`, distances, 
+                                                min(distances), SIMPLIFY = FALSE))
+  
+  transformed_distances <- data.frame(V1=mapply(FUN = `/`, transformed_distances, 
+                                                (max(distances)-min(distances)), SIMPLIFY = FALSE))
+  
+  transformed_distances <- data.frame(V1=mapply(FUN = `*`, transformed_distances, 
+                                                b, SIMPLIFY = FALSE))
+  
+  return(list(a_intensities = transformed_accIntensities, b_distances = transformed_distances))
+}
 
 #' Gives all the shortest paths lenght between each pair of nodes of the given graph (network)
 #' 
@@ -64,7 +96,7 @@ get_k_shortest_paths <- function(graph, from, to, weight='weight', k){
     weight = as.numeric(unlist(if (weight=='distance') tmp_df$distance else tmp_df$weight))
   )
   
-  return(k_shortest_paths(g_df, from = from, to = to, k=k))
+  #return(k_shortest_paths(g_df, from = from, to = to, k=k))
 }
 
 

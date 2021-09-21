@@ -18,6 +18,13 @@ all_shortest_paths21 <- get_k_shortest_paths(graph = g, from = juneda, to = mena
 all_shortest_paths12 <- get_k_shortest_paths(graph = g, from = soses, to = belloc, weight = "weight", k=1)
 all_shortest_paths22 <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = "weight", k=1)
 
+
+all_shortest_paths11 <- get_shortest_paths(graph = g, from = soses, to = belloc, weight = "distance", k=1)
+all_shortest_paths21 <- get_shortest_paths(graph = g, from = juneda, to = menarguens, weight = "distance", k=1)
+
+all_shortest_paths12 <- get_shortest_paths(graph = g, from = soses, to = belloc, weight = "weight", k=1)
+all_shortest_paths22 <- get_shortest_paths(graph = g, from = juneda, to = menarguens, weight = "weight", k=1)
+
 #--------------------------------PLOT Path Examples--------------------------------
 win <- c(minx,maxx,miny,maxy)
 pdf("Images/PathExamples.pdf",height=12,width=13.5)
