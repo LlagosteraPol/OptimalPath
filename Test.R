@@ -95,7 +95,73 @@ as_data_frame(g, what="edges")
 source("functions.R")
 source("IgraphModel.R")
 
-#filtered_paths <- filter_paths(graph = g, from = alcarras, to = albages, edge_param = "distance", filter = 10000)
+# Paths containing the worst edge
+junmen_worst <- c(63,89,90,236,319,95,410,133,132,131,130,183,184,185,186,41,42,20,227,85,228,1,2,226,58,271,4,5,206,205,189,190,191,192,193,194,195,196,197)
+sosbell_worst <- c(161,160,143,144,257,258,259,260,265,266,267,268,269,102,316,317,318,315,314,313,312,311,310,309,308,305,306,25,26,307,298,299,297,300,301,302,303,304,294,295,293,296,291,292,290,288,289,279,280,281,282,283,284,285,286,40,39,321,322,323,324,325,196,195,194,193,192,191,190,189,205,206,5,4,271,58,226,2,84,101,92,100,99,50,250,134,251,252,128,388,389,334,390,391,234,235,236,320,91,90,89,63,64,65,66,42,20,227,85,86,87,88,8,248,207,208,209)
+
+junmen_worst_int <- max(E(g, path = unlist(junmen_worst))$weight)
+sosbell_worst_int <- max(E(g, path = unlist(sosbell_worst))$weight)
+
+
+
+# Filtering Paths
+filtered_paths <- filter_paths(graph = g, from = soses, to = belloc, weight = "weight", filters = c(100))
+
+junmen_allPaths <- all_simple_paths(g, from=juneda, to=menarguens)
+sosbell_allPaths <- all_simple_paths(g, from=soses, to=belloc)
+
+ipaths1 <- list()
+for (path in sosbell_allPaths){
+  
+  distance_sum <- sum(E(g, path = unlist(path))$distance)
+  
+  weight_sum <- sum(E(g, path = unlist(path))$weight)
+  
+  t_weight_sum <- sum(E(g, path = unlist(path))$t_weight)
+  
+  t_distance_sum <- sum(E(g, path = unlist(path))$t_distance)
+  
+  all_sum <- sum(E(g, path = unlist(path))$all)
+  
+  ipaths1[[length(ipaths1)+1]] <- list(from = soses, to=belloc, path = as.numeric(unlist(as_ids(path))), 
+                                     distance = distance_sum, 
+                                     weight = weight_sum,
+                                     t_distance = t_distance_sum,
+                                     t_weight = t_weight_sum,
+                                     all = all_sum,
+                                     max_int = max(E(g, path = unlist(path))$weight)) 
+}
+
+ipaths1 <- ipaths1[order(sapply(ipaths1,'[[',9))]
+for(i in 1:length(ipaths1)){
+  ipaths1[[i]] <- c(ipaths1[[i]], n_t_all=i)
+}
+
+ipaths2 <- list()
+for (path in junmen_allPaths){
+  
+  distance_sum <- sum(E(g, path = unlist(path))$distance)
+  
+  weight_sum <- sum(E(g, path = unlist(path))$weight)
+  
+  t_weight_sum <- sum(E(g, path = unlist(path))$t_weight)
+  
+  t_distance_sum <- sum(E(g, path = unlist(path))$t_distance)
+  
+  all_sum <- sum(E(g, path = unlist(path))$all)
+  
+  ipaths2[[length(ipaths2)+1]] <- list(from = juneda, to = menarguens, path = as.numeric(unlist(as_ids(path))), 
+                                     distance = distance_sum, 
+                                     weight = weight_sum,
+                                     t_distance = t_distance_sum,
+                                     t_weight = t_weight_sum,
+                                     all = all_sum,
+                                     max_int = max(E(g, path = unlist(path))$weight)) 
+}
+ipaths2 <- ipaths2[order(sapply(ipaths2,'[[',9))]
+for(i in 1:length(ipaths2)){
+  ipaths2[[i]] <- c(ipaths2[[i]], n_t_all=i)
+}
 
 juneda = 63
 soses = 161

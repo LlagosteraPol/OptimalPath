@@ -7,18 +7,18 @@ source("functions.R")
 load(file="DB/RData/Linear_pixel_final_18_Juny_2021_ultima_copia.RData")
 
 #Importa dades
-Dades_vertex<-+data.frame(V1=LNnew$vertices$x, V2=LNnew$vertices$y)
+Dades_vertex<-data.frame(V1=LNnew$vertices$x, V2=LNnew$vertices$y)
 Dades_segments<-data.frame(V1=LNnew$from, V2=LNnew$to)
 Dades_pesos<-data.frame(V1=seg_m)
 Dades_distancies<-data.frame(V1=length_seg_entre_cross)
 
-a = 0.8902
-b = 0.1098
+a = 0.4
+b = 0.6
 
 transformed_weights <- weighted_data(Dades_pesos, Dades_distancies, a, b)
 transformed_accIntensities <- transformed_weights$a_intensities
 transformed_distances <- transformed_weights$b_distances
-all_data <- transformed_distances+transformed_accIntensities
+all_data <- transformed_distances+transformed_accIntensities # Equation W(l_i)
 
 #all_data <- combine_weights(transformed_accIntensities, transformed_distances, 0.8)
 # transformed_all <- a*transformed_distances + b*transformed_distances 

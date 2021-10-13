@@ -2,7 +2,7 @@ library(dils)
 require(igraph)
 library(roxygen2)
 library(spatstat)
-#library(yenpathy)
+library(yenpathy)
 library(parallel)
 
 
@@ -96,7 +96,7 @@ get_k_shortest_paths <- function(graph, from, to, weight='weight', k){
     weight = as.numeric(unlist(if (weight=='distance') tmp_df$distance else tmp_df$weight))
   )
   
-  #return(k_shortest_paths(g_df, from = from, to = to, k=k))
+  return(k_shortest_paths(g_df, from = from, to = to, k=k))
 }
 
 
@@ -310,14 +310,18 @@ filter_paths <- function(graph, from, to, weight, filters, paths = NULL){
     paths <- all_simple_paths(graph, from=from, to=to)
   }
   
-  
+  pb = txtProgressBar(min = 0, max = length(paths), initial = 0) 
+  counter <- 0
+  cat("Filtering paths...\n")
   for(path in paths){
+    setTxtProgressBar(pb,counter)
     weight_sum <- 0
     is_forbiden <- TRUE
     filters_idx <- 1
     
     for(percent in filters){
       if(weight == 'distance'){
+        
         if(max(E(graph, path = unlist(path))$distance) < (max_parameter*(percent/100))){
           weight_sum <- sum(E(graph, path = unlist(path))$distance)
           is_forbiden <- FALSE
@@ -339,11 +343,13 @@ filter_paths <- function(graph, from, to, weight, filters, paths = NULL){
       paths_ordered[[toString(filters[filters_idx])]][[length(paths_ordered[[toString(filters[filters_idx])]])+1]] <- 
         list(weight = weight_sum, path = as.numeric(unlist(as_ids(path))))
     }
+    counter <- counter + 1
   }
+  close(pb)
+  
   #return(list(paths = paths_ordered[order(sapply(paths_ordered,'[[',1))]))
   return(paths_ordered)
 }
-
 
 #' Delete all the edges with weight equal to or greater than the specified amount
 #'
