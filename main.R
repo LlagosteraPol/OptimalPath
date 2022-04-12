@@ -1,40 +1,29 @@
 
 
-source("DB_preparation.R")
+rm(list = ls())
+
 source("plots.R")
-
-# Add weights to the edges matrix
-weighted_segments <- cbind(Dades_segments, Dades_pesos) 
-weighted_segments <- cbind(weighted_segments, Dades_distancies)
-weighted_segments <- cbind(weighted_segments, transformed_accIntensities) 
-weighted_segments <- cbind(weighted_segments, transformed_distances)
-weighted_segments <- cbind(weighted_segments, all_data)
-
-colnames(weighted_segments) <- c("from","to","weight","distance", "t_weight", "t_distance", "all")
+source("functions.R")
 
 
-vertices_df <- data.frame(names = seq(1, length(Dades_vertex[[1]]), 1), 
-                          xcoord = Dades_vertex$V1, 
-                          ycoord = Dades_vertex$V2)
+net_data <- read.csv2('DB/CSV/net_data.csv')
+vertice_data <- read.csv2('DB/CSV/node_data.csv')
+crash_data <- read.csv2('DB/CSV/crash_data.csv')
 
-segments_df <- data.frame(from = weighted_segments$from,
-                          to = weighted_segments$to,
-                          weight = weighted_segments$weight,
-                          imd = imd,
-                          distance = weighted_segments$distance,
-                          t_weight = weighted_segments$t_weight,
-                          t_distance = weighted_segments$t_distance,
-                          all = weighted_segments$all)
+imd <- net_data[,'imd2015']
 
-g = graph_from_data_frame(segments_df, directed=FALSE, vertices=vertices_df)
+inverted_imd <- mapply(FUN = `-`, max(imd), imd)
 
-PlotNetwork(g, net_edges = igraph::E(g)[1], high_size = 10)
-PlotNetwork(g, net_nodes = c(1,2), net_edges = igraph::E(g)[1], high_size = 10)
-PlotNetwork(g, net_vertices = c(igraph::ends(g, igraph::E(g)[2])), net_edges = igraph::E(g)[2])
+transformed_weights <- weighted_data(net_data[,'intensity'], inverted_imd, 0.5, 0.5)
+transformed_accIntensities <- transformed_weights$cov1_comb
+transformed_volumes <- transformed_weights$cov2_comb
 
+weighted_segments <- cbind(net_data, transformed_accIntensities)
+weighted_segments <- cbind(weighted_segments, transformed_volumes) 
 
-checker <- function(g, i){
-  PlotNetwork(g, net_vertices = c(igraph::ends(g, igraph::E(g)[i])), net_edges = igraph::E(g)[i])
-}
+colnames(weighted_segments) <- c("from","to", "distanse", "intensity", "density", "t_intensity", "t_density")
 
+g = graph_from_data_frame(weighted_segments, directed = FALSE, vertices = vertice_data)
+
+PlotNetwork(g, mode = 'intensity')
 

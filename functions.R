@@ -6,36 +6,30 @@ library(yenpathy)
 library(parallel)
 
 
-#' Calculates the wheighted intensities and distances based on formula W(l_i)
+#' Calculates the linear combination between two covariates (based on formula W(l_i))
 #' 
 #' @name w_li
-#' @param intensities Dataframe containing all the accident intensities
-#' @param distances Dataframe containing all the distances
-#' @param a weighting for intensities (a+b=1)
-#' @param b weighting for distances (a+b=1)
-#' @return list with weighted intensities and distances
+#' @param cov1 vector containing the first covariate data
+#' @param cov2 vector containing the second covariate data
+#' @param a weighting for cov1 (a+b=1)
+#' @param b weighting for cov2 (a+b=1)
+#' @return list with weighted cov1 and cov2
 #' 
-weighted_data <- function(intensities, distances, a, b){
+weighted_data <- function(cov1, cov2, a, b){
   
-  transformed_accIntensities <- data.frame(V1=mapply(FUN = `-`, intensities, 
-                                                     min(intensities), SIMPLIFY = FALSE))
+  transformed_cov1 <- mapply(FUN = `-`, cov1, min(cov1))
   
-  transformed_accIntensities <- data.frame(V1=mapply(FUN = `/`, transformed_accIntensities, 
-                                                     (max(intensities)-min(intensities)), SIMPLIFY = FALSE))
+  transformed_cov1 <- mapply(FUN = `/`, transformed_cov1, (max(cov1)-min(cov1)))
   
-  transformed_accIntensities <- data.frame(V1=mapply(FUN = `*`, transformed_accIntensities, 
-                                                     a, SIMPLIFY = FALSE))
+  transformed_cov1 <- mapply(FUN = `*`, transformed_cov1, a)
   
-  transformed_distances <- data.frame(V1=mapply(FUN = `-`, distances, 
-                                                min(distances), SIMPLIFY = FALSE))
+  transformed_cov2 <-mapply(FUN = `-`, cov2, min(cov2))
   
-  transformed_distances <- data.frame(V1=mapply(FUN = `/`, transformed_distances, 
-                                                (max(distances)-min(distances)), SIMPLIFY = FALSE))
+  transformed_cov2 <- mapply(FUN = `/`, transformed_cov2, (max(cov2)-min(cov2)))
   
-  transformed_distances <- data.frame(V1=mapply(FUN = `*`, transformed_distances, 
-                                                b, SIMPLIFY = FALSE))
+  transformed_cov2 <- mapply(FUN = `*`, transformed_cov2, b)
   
-  return(list(a_intensities = transformed_accIntensities, b_distances = transformed_distances))
+  return(list(cov1_comb = transformed_cov1, cov2_comb = transformed_cov2))
 }
 
 #' Gives all the shortest paths lenght between each pair of nodes of the given graph (network)
@@ -474,4 +468,153 @@ combine_weights <- function(data1, data2, prop = 0.5){
   transformed_data1 <- data.frame(V1=mapply(FUN = `*`, data1, prop, SIMPLIFY = FALSE))
   transformed_data2 <- data.frame(V1=mapply(FUN = `*`, data2, (1-prop), SIMPLIFY = FALSE))
   return (data.frame(V1 = transformed_data1+transformed_data2))
+}
+
+
+#' This function plots a heatmap of the given network attribute, or the plain network if no attribute is given.
+#' 
+#' @name PlotNetwork
+#' 
+#' @param g igraph object
+#' @param mode a string with the desired heatmap (edge attribute) to be plotted or 'none' to plot the plain map (default).
+#' @param high_size multiplier for edge and node size
+#' @param net_vertices chosen vertices to plot the heatmap (or its related edges in case to plot the edge heatmap)
+#' @param net_edges chosen edges to plot the heatmap, can be either the edge id's or its node endpoints (e.j. c(1,2, 2,3, 7,8))
+#' @param events if the vector of events occurring on the network are given, then will be shown as orange squares, NULL by default
+#' @param alpha optional argument to set the transparency of the events (show_events = TRUE). The range is from 0.1 (transparent) to 1 (opaque). Default: alpha = 1
+#' @param ... extra arguments for the class ggplot
+#' 
+#' @return The plot of the heatmap with class c("gg", "ggplot")
+#' 
+PlotNetwork <- function(g, net_vertices = NULL, net_edges = NULL, mode = 'none', high_size = 1, events = NULL, alpha = 1, ...){
+  
+  data_df <- data.frame(xcoord = igraph::vertex_attr(g, 'xcoord'), 
+                        ycoord = igraph::vertex_attr(g, 'ycoord'))
+  
+  highlighted_df <- data_df[as.numeric(net_vertices),]
+  
+  
+  node_coords <- data.frame(xcoord = igraph::vertex_attr(g)$xcoord, ycoord = igraph::vertex_attr(g)$ycoord)
+  rownames(node_coords) <- igraph::vertex_attr(g)$name
+  #get edges, which are pairs of node IDs
+  edgelist <- igraph::get.edgelist(g)
+  #convert to a four column edge data frame with source and destination coordinates
+  edges_df <- data.frame(node_coords[edgelist[,1],], node_coords[edgelist[,2],])
+  colnames(edges_df) <- c("xcoord1","ycoord1","xcoord2","ycoord2")
+  
+  
+  if(mode == 'none'){
+    if( is.null(net_vertices) && is.null(net_edges) ){
+      hplot <- ggplot2::ggplot(data_df, ggplot2::aes_string(x = 'xcoord', y = 'ycoord'), ...) + 
+        ggplot2::geom_segment(ggplot2::aes_string(x = 'xcoord1', y = 'ycoord1', 
+                                                  xend = 'xcoord2', yend = 'ycoord2'), 
+                              data = edges_df, 
+                              size = 0.8, 
+                              colour = "grey") +
+        ggplot2::geom_point(shape = 19, 
+                            size = 1.7) +
+        ggplot2::scale_y_continuous(name = "y-coordinate") + 
+        ggplot2::scale_x_continuous(name = "x-coordinate") + 
+        ggplot2::theme_bw()
+    }else{
+      edge_ends <- igraph::ends(g, net_edges)
+      
+      #convert to a four column edge data frame with source and destination coordinates
+      sub_edges_df <- data.frame(node_coords[edge_ends[,1],], node_coords[edge_ends[,2],])
+      colnames(sub_edges_df) <- c("xcoord1","ycoord1","xcoord2","ycoord2")
+      
+      hplot <- ggplot2::ggplot(data_df, ggplot2::aes_string(x = 'xcoord', y = 'ycoord'), ...) + 
+        ggplot2::geom_segment(ggplot2::aes_string(x = 'xcoord1', y = 'ycoord1', 
+                                                  xend = 'xcoord2', yend = 'ycoord2'),
+                              data = edges_df,
+                              size = 0.8,
+                              colour = 'grey') +
+        ggplot2::geom_segment(ggplot2::aes_string(x = 'xcoord1', y = 'ycoord1', 
+                                                  xend = 'xcoord2', yend = 'ycoord2'),
+                              data = sub_edges_df,
+                              size = 0.8 * high_size,
+                              colour = 'green') +
+        ggplot2::geom_point(shape = 19, 
+                            size = 1.7,
+                            colour="gray") +
+        ggplot2::geom_point(data = highlighted_df,
+                            shape = 19,
+                            size = 1.7 * high_size,
+                            colour = 'darkgreen',
+                            ggplot2::aes_string(x = 'xcoord', y = 'ycoord')) +
+        ggplot2::scale_y_continuous(name = "y-coordinate") + 
+        ggplot2::scale_x_continuous(name = "x-coordinate") + 
+        ggplot2::theme_bw()
+    }
+  }else{
+    if(is.null(net_edges)){
+      net_edges <- igraph::E(g)
+    }
+    
+    if(length(net_edges) == length(igraph::E(g))){
+      edge_int <- igraph::edge_attr(g, mode)
+      
+      hplot <- ggplot2::ggplot(data_df, ggplot2::aes_string(x = 'xcoord', y = 'ycoord'), ...) +
+        viridis::scale_color_viridis(option = 'H') +
+        ggplot2::labs(title = paste0(mode, ' Heatmap\n'),
+                      color = mode) +
+        ggplot2::geom_segment(ggplot2::aes_string(x = 'xcoord1', y = 'ycoord1', 
+                                                  xend = 'xcoord2', yend = 'ycoord2',
+                                                  colour = 'edge_int'),
+                              data = edges_df,
+                              size = 0.8) +
+        ggplot2::geom_point(shape = 19,
+                            size = 1.7,
+                            colour="gray") +
+        ggplot2::scale_y_continuous(name = "y-coordinate") +
+        ggplot2::scale_x_continuous(name = "x-coordinate") +
+        ggplot2::theme_bw() +
+        ggplot2::theme(legend.title = ggplot2::element_text(face = "bold"),
+                       plot.title = ggplot2::element_text( size = 14,
+                                                           face = "bold",
+                                                           hjust = 0.5) )
+    }else{
+      edge_ends <- igraph::ends(g, net_edges)
+      
+      edge_int <- igraph::edge_attr(g, mode, net_edges)
+      
+      #convert to a four column edge data frame with source and destination coordinates
+      sub_edges_df <- data.frame(node_coords[edge_ends[,1],], node_coords[edge_ends[,2],])
+      colnames(sub_edges_df) <- c("xcoord1","ycoord1","xcoord2","ycoord2")
+      
+      hplot <- ggplot2::ggplot(data_df, ggplot2::aes_string(x = 'xcoord', y = 'ycoord'), ...) +
+        viridis::scale_color_viridis(option = 'H') +
+        ggplot2::labs(title = paste0(mode, ' Heatmap\n'),
+                      color = mode) +
+        ggplot2::geom_segment(ggplot2::aes_string(x = 'xcoord1', y = 'ycoord1', 
+                                                  xend = 'xcoord2', yend = 'ycoord2'),
+                              data = edges_df,
+                              size = 0.8,
+                              colour = 'grey') +
+        ggplot2::geom_segment(ggplot2::aes_string(x = 'xcoord1', y = 'ycoord1', 
+                                                  xend = 'xcoord2', yend = 'ycoord2', 
+                                                  colour = 'edge_int'),
+                              data = sub_edges_df,
+                              size = 0.8) +
+        ggplot2::geom_point(shape = 19,
+                            size = 1.7,
+                            colour="gray") +
+        ggplot2::scale_y_continuous(name = "y-coordinate") +
+        ggplot2::scale_x_continuous(name = "x-coordinate") +
+        ggplot2::theme_bw() +
+        ggplot2::theme(legend.title = ggplot2::element_text(face = "bold"),
+                       plot.title = ggplot2::element_text( size = 14,
+                                                           face = "bold",
+                                                           hjust = 0.5) )
+    }
+  } 
+  
+  if(!is.null(events)){
+    hplot + ggplot2::geom_point(data = as.data.frame(events),
+                                mapping = ggplot2::aes(x = events[,1], y = events[,2]),
+                                shape = 22, fill = 'orange', color = 'orange',
+                                alpha = alpha)
+  }else{
+    hplot
+  }
 }
