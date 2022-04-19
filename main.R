@@ -164,6 +164,50 @@ shortest_w_int_dens_jm <- get_k_shortest_paths(graph = g, from = juneda, to = me
 all_paths_sb <- all_simple_paths(g, from = soses, to = belloch)
 all_paths_jm <- all_simple_paths(g, from = soses, to = belloch)
 
+# #-------------------------------------------------------10%------------------------------------------------------------
+
+gd10 = filter_graph(graph=g, filter=10, weight='distance', paths = all_paths_sb)
+sos_bell_d10 = rate_paths(graph = gd10, from = soses, to = belloc)
+jun_men_d10 = rate_paths(graph = gd10, from = juneda, to = menarguens)
+
+gi10 = filter_graph(graph=g, filter=10, weight='density', paths = all_paths_jm)
+sos_bell_i10 = rate_paths(graph = gi10, from = soses, to = belloc)
+jun_men_i10 = rate_paths(graph = gi10, from = juneda, to = menarguens)
+
+
+# #-------------------------------------------------------25%------------------------------------------------------------
+
+gd25 = filter_graph(graph=g, filter=25, weight='distance', paths = all_paths_sb)
+sos_bell_d25 = rate_paths(graph = gd25, from = soses, to = belloc)
+jun_men_d25 = rate_paths(graph = gd25, from = juneda, to = menarguens)
+
+gi25 = filter_graph(graph=g, filter=25, weight='density')
+sos_bell_i25 = rate_paths(graph = gi25, from = soses, to = belloc, paths = all_paths_jm)
+jun_men_i25 = rate_paths(graph = gi25, from = juneda, to = menarguens)
+
+
+# #-------------------------------------------------------50%------------------------------------------------------------
+
+gd50 = filter_graph(graph=g, filter=50, weight='distance', paths = all_paths_sb)
+sos_bell_d50 = rate_paths(graph = gd50, from = soses, to = belloc)
+jun_men_d50 = rate_paths(graph = gd50, from = juneda, to = menarguens)
+
+gi50 = filter_graph(graph=g, filter=50, weight='density')
+sos_bell_i50 = rate_paths(graph = gi50, from = soses, to = belloc, paths = all_paths_jm)
+jun_men_i50 = rate_paths(graph = gi50, from = juneda, to = menarguens)
+
+
+# #-------------------------------------------------------75%------------------------------------------------------------
+
+gd75 = filter_graph(graph=g, filter=75, weight='distance', paths = all_paths_sb)
+sos_bell_d75 = rate_paths(graph = gd75, from = soses, to = belloc)
+jun_men_d75 = rate_paths(graph = gd75, from = juneda, to = menarguens)
+
+gi75 = filter_graph(graph=g, filter=75, weight='density', paths = all_paths_sb)
+sos_bell_i75 = rate_paths(graph = gi75, from = soses, to = belloc, paths = all_paths_jm)
+jun_men_i75 = rate_paths(graph = gi75, from = juneda, to = menarguens)
+
+
 # -----------------Plot test 1--------------------------
 
 mode <- 'density'
