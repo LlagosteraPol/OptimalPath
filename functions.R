@@ -6,16 +6,68 @@ library(yenpathy)
 library(parallel)
 
 
+#' Creates a network model in igraph class where the edge and node attributes contain information.
+#' 
+#' @name PrepareIgraph
+#' @param net_data dataframe with columns from, to, distance, covariate1 and covariate2 in this order but the names can be different.
+#' @param node_data two columns dataframe with the Id of the nodes and its x and y coordinates.
+#' @param cov1 select first covariant to calculate the linear combination W(l_i)
+#' @param cov2 select second covariant to calculate the linear combination W(l_i)
+#' @param prop select the proportion for the covariance linear combination, (cov1 = prop, cov2 = 1 - prop). Default 0.5.
+#' @param invert_cov1 invert covariate 1 (max(cov1) - cov1_i), default FALSE
+#' @param invert_cov2 invert covariate 2 (max(cov2) - cov2_i), default FALSE
+#' @return igraph network class object
+#' 
+PrepareIgraph <- function(net_data, node_data, cov1, cov2, prop = 0.5, invert_cov1 = FALSE, invert_cov2 = FALSE){
+  
+  if(prop > 1 || prop < 0) stop('Bad proportion Error: Proportion needs to be in the range [0, 1].')
+  
+  if(length(node_data) < 3){
+    id <-  rep(1:nrow(net_data))
+    net_data <- cbind( id, net_data)
+  }
+  
+  
+  transformed_weights <- weighted_data(cov1 = net_data[, cov1], 
+                                       cov2 = net_data[, cov2], 
+                                       a = prop, 
+                                       b = 1 - prop, 
+                                       invert_cov1 = invert_cov1, 
+                                       invert_cov2 = invert_cov2)
+  
+  transformed_cov1 <- transformed_weights$cov1_comb
+  transformed_cov2 <- transformed_weights$cov2_comb
+  
+  weighted_segments <- cbind(net_data, transformed_cov1)
+  weighted_segments <- cbind(weighted_segments, transformed_cov2) 
+  weighted_segments <- cbind(weighted_segments, transformed_cov1 + transformed_cov2) 
+  
+  colnames(weighted_segments) <- c(colnames(net_data), 
+                                   paste0("T(", cov1, ")"), 
+                                   paste0("T(", cov2, ")"),
+                                   paste0("W(l_i)"))
+  
+  weighted_segments$id <- rep(1:nrow(weighted_segments))
+  
+  return(graph_from_data_frame(weighted_segments, directed = FALSE, vertices = node_data))
+}
+
+
 #' Calculates the linear combination between two covariates (based on formula W(l_i))
 #' 
-#' @name w_li
+#' @name weighted_data
 #' @param cov1 vector containing the first covariate data
 #' @param cov2 vector containing the second covariate data
 #' @param a weighting for cov1 (a+b=1)
 #' @param b weighting for cov2 (a+b=1)
+#' @param invert_cov1 invert covariate 1 (max(cov1) - cov1_i), default FALSE
+#' @param invert_cov2 invert covariate 2 (max(cov2) - cov2_i), default FALSE
 #' @return list with weighted cov1 and cov2
 #' 
-weighted_data <- function(cov1, cov2, a, b){
+weighted_data <- function(cov1, cov2, a, b, invert_cov1 = FALSE, invert_cov2 = FALSE){
+  
+  if(invert_cov1) cov1 <- mapply(FUN = `-`, max(cov1), cov1)
+  if(invert_cov2) cov2 <- mapply(FUN = `-`, max(cov2), cov2)
   
   transformed_cov1 <- mapply(FUN = `-`, cov1, min(cov1))
   
@@ -77,9 +129,10 @@ getCrossings = function(graph){
 #' @param to Ending node.
 #' @param weight The weight to calculate the shortests paths, can be 'weight' or 'distance'
 #' @param k number of shortest paths to be returned
+#' @param show_weight show also the total weight of the paths, default = FALSE
 #' @return list of lists containing the top k-shortest paths where each path is represented by the vertices constituting it
 #' 
-get_k_shortest_paths <- function(graph, from, to, weight='weight', k){
+get_k_shortest_paths <- function(graph, from, to, weight = 'weight', k, show_weight = FALSE){
   # Get k shortest paths using 'yenpathy' library
   tmp_df <- as_data_frame(as.directed(graph, mode = "mutual")) # the graph must be converted to directed
   
@@ -87,12 +140,34 @@ get_k_shortest_paths <- function(graph, from, to, weight='weight', k){
   g_df <- data.frame(
     start = as.numeric(unlist(tmp_df$from)), # The ID's are characters (Ex: '1') must be converted to numbers
     end = as.numeric(unlist(tmp_df$to)),
-    weight = as.numeric(unlist(if (weight=='distance') tmp_df$distance else tmp_df$weight))
+    weight = as.numeric(unlist(tmp_df[, weight]))
   )
   
-  return(k_shortest_paths(g_df, from = from, to = to, k=k))
+  shortest_paths <- yenpathy::k_shortest_paths(g_df, from = from, to = to, k=k)
+  
+  if(show_weight){
+    paths_tweight <- list()
+    
+    for(element in shortest_paths){
+      paths_tweight <- append(paths_tweight, list(list(path = element, weight = PathWeight(graph, element, weight))))
+    }
+    
+    paths_tweight
+    
+  }else shortest_paths
 }
 
+#' Return the total weight of the given path
+#' 
+#' @name PathWeight
+#' @param graph The igraph class network
+#' @param path A sequence of nodes which forms the path
+#' @param weight the type of weight to be calculated 
+#' 
+#' @return the total specified weight of the given path
+PathWeight <- function(graph, path, weight){
+  sum(igraph::edge_attr(graph = graph, name = weight, index = igraph::E(graph, path = unlist(path))))
+}
 
 #' Get all the paths between two nodes and gives information about its weight (accident intensity),
 #' distance, transformed weight and transformed distance (weight and distance
@@ -113,7 +188,7 @@ paths_info <- function(graph, from, to){
   for (path in all_paths){
     
     distance_sum <- sum(E(graph, path = unlist(path))$distance)
-
+    
     weight_sum <- sum(E(graph, path = unlist(path))$weight)
     
     t_weight_sum <- sum(E(graph, path = unlist(path))$t_weight)
@@ -121,7 +196,7 @@ paths_info <- function(graph, from, to){
     t_distance_sum <- sum(E(graph, path = unlist(path))$t_distance)
     
     all_sum <- sum(E(graph, path = unlist(path))$all)
-      
+    
     ipaths[[length(ipaths)+1]] <- list(from = from, to=to, path = as.numeric(unlist(as_ids(path))), 
                                        distance = distance_sum, 
                                        weight = weight_sum,
@@ -294,14 +369,10 @@ filter_paths <- function(graph, from, to, weight, filters, paths = NULL){
   filters <- as.numeric(unlist(filters)) # transform strings to integuers
   is_forbiden <- FALSE
   
-  if(weight == 'distance'){
-    max_parameter  = max(E(graph)$distance)
-  }else{
-    max_parameter = max(E(graph)$weight)
-  }
+  max_parameter = max(igraph::edge_attr(graph, weight))
   
   if (is.null(paths)){
-    paths <- all_simple_paths(graph, from=from, to=to)
+    paths <- igraph::all_simple_paths(graph, from=from, to=to)
   }
   
   pb = txtProgressBar(min = 0, max = length(paths), initial = 0) 
@@ -314,6 +385,14 @@ filter_paths <- function(graph, from, to, weight, filters, paths = NULL){
     filters_idx <- 1
     
     for(percent in filters){
+      
+      #TODO: Finish
+      # if(max(E(graph, path = unlist(path))$distance) < (max_parameter*(percent/100))){
+      #   weight_sum <- sum(E(graph, path = unlist(path))$distance)
+      #   is_forbiden <- FALSE
+      #   break
+      # }
+      
       if(weight == 'distance'){
         
         if(max(E(graph, path = unlist(path))$distance) < (max_parameter*(percent/100))){
@@ -396,7 +475,7 @@ print_path_graph <- function(graph, path, color){
   
   ecol <- rep("black", ecount(graph))
   ecol[E(graph, path=path)] <- color
-
+  
   E(graph)$width <- 1
   E(graph, path=path)$width <- 3
   

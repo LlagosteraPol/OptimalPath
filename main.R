@@ -7,23 +7,216 @@ source("functions.R")
 
 
 net_data <- read.csv2('DB/CSV/net_data.csv')
-vertice_data <- read.csv2('DB/CSV/node_data.csv')
+node_data <- read.csv2('DB/CSV/node_data.csv')
 crash_data <- read.csv2('DB/CSV/crash_data.csv')
 
-imd <- net_data[,'imd2015']
+colnames(net_data)[5] <-'density'
 
-inverted_imd <- mapply(FUN = `-`, max(imd), imd)
 
-transformed_weights <- weighted_data(net_data[,'intensity'], inverted_imd, 0.5, 0.5)
-transformed_accIntensities <- transformed_weights$cov1_comb
-transformed_volumes <- transformed_weights$cov2_comb
+g = PrepareIgraph(net_data = net_data, 
+                  node_data = node_data, 
+                  cov1 = 'intensity', 
+                  cov2 = 'density', 
+                  prop = 0.5, 
+                  invert_cov1 = FALSE, 
+                  invert_cov2 = TRUE)
 
-weighted_segments <- cbind(net_data, transformed_accIntensities)
-weighted_segments <- cbind(weighted_segments, transformed_volumes) 
 
-colnames(weighted_segments) <- c("from","to", "distanse", "intensity", "density", "t_intensity", "t_density")
+g_df <- as.data.frame(igraph::as_data_frame(g))
 
-g = graph_from_data_frame(weighted_segments, directed = FALSE, vertices = vertice_data)
 
-PlotNetwork(g, mode = 'intensity')
+# Heatmap
+pdf("Images/density_heatmap.pdf",height=6,width=13.5)
+  PlotNetwork(g, mode = 'density') + 
+    ggplot2::coord_fixed() + 
+    ggplot2::scale_y_continuous(name = NULL) + 
+    ggplot2::scale_x_continuous(name = NULL) +
+    ggplot2::labs(title = NULL, color = 'density') 
+dev.off()
+
+short_path_sb <- igraph::shortest_paths(graph = g, 
+                                        from = igraph::V(g)[soses], 
+                                        to = igraph::V(g)[belloch],
+                                        weight = igraph::edge_attr(g, 'distance'),
+                                        output = 'both')
+
+nodes_selection_sb <- as.character(short_path_sb$vpath[[1]])
+edges_selection_sb <- as.character(short_path_sb$epath[[1]])
+
+short_path_w_int_dens_sb <- igraph::shortest_paths(graph = g, 
+                                     from = igraph::V(g)[soses], 
+                                     to = igraph::V(g)[belloch],
+                                     weight = igraph::edge_attr(g, 'W(l_i)'),
+                                     output = 'both')
+
+nodes_selection_w_sb <- as.character(short_path_w_int_dens_sb$vpath[[1]])
+edges_selection_w_sb <- as.character(short_path_w_int_dens_sb$epath[[1]])
+
+short_path_w_int_dens_jm <- igraph::shortest_paths(graph = g, 
+                                                   from = igraph::V(g)[juneda], 
+                                                   to = igraph::V(g)[menarguens],
+                                                   weight = igraph::edge_attr(g, 'W(l_i)'),
+                                                   output = 'both')
+
+nodes_selection_w_jm <- as.character(short_path_w_int_dens_jm$vpath[[1]])
+edges_selection_w_jm <- as.character(short_path_w_int_dens_jm$epath[[1]])
+
+short_path_jm <- igraph::shortest_paths(graph = g, 
+                                        from = igraph::V(g)[juneda], 
+                                        to = igraph::V(g)[menarguens],
+                                        weight = igraph::edge_attr(g, 'distance'),
+                                        output = 'both')
+
+nodes_selection_jm <- as.character(short_path_jm$vpath[[1]])
+edges_selection_jm <- as.character(short_path_jm$epath[[1]])
+
+pdf("Images/safest_path_sb.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_w_sb, net_edges = edges_selection_w_sb) + 
+  ggplot2::coord_fixed() + 
+  ggplot2::scale_y_continuous(name = NULL) + 
+  ggplot2::scale_x_continuous(name = NULL) +
+  ggplot2::theme(
+        axis.title.x = ggplot2::element_blank(),
+        axis.text.x  = ggplot2::element_blank(),
+        axis.ticks.x = ggplot2::element_blank(),
+        axis.title.y = ggplot2::element_blank(),
+        axis.text.y  = ggplot2::element_blank(),
+        axis.ticks.y = ggplot2::element_blank(),
+        panel.grid.major = ggplot2::element_blank(), 
+        panel.grid.minor = ggplot2::element_blank())
+dev.off()
+
+
+pdf("Images/safest_path_jm.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_w_jm, net_edges = edges_selection_w_jm) + 
+  ggplot2::coord_fixed() + 
+  ggplot2::scale_y_continuous(name = NULL) + 
+  ggplot2::scale_x_continuous(name = NULL) +
+  ggplot2::theme(
+    axis.title.x = ggplot2::element_blank(),
+    axis.text.x  = ggplot2::element_blank(),
+    axis.ticks.x = ggplot2::element_blank(),
+    axis.title.y = ggplot2::element_blank(),
+    axis.text.y  = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank(),
+    panel.grid.major = ggplot2::element_blank(), 
+    panel.grid.minor = ggplot2::element_blank())
+dev.off()
+
+pdf("Images/shortest_path_sb.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_sb, net_edges = edges_selection_sb) + 
+  ggplot2::coord_fixed() + 
+  ggplot2::scale_y_continuous(name = NULL) + 
+  ggplot2::scale_x_continuous(name = NULL) +
+  ggplot2::theme(
+    axis.title.x = ggplot2::element_blank(),
+    axis.text.x  = ggplot2::element_blank(),
+    axis.ticks.x = ggplot2::element_blank(),
+    axis.title.y = ggplot2::element_blank(),
+    axis.text.y  = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank(),
+    panel.grid.major = ggplot2::element_blank(), 
+    panel.grid.minor = ggplot2::element_blank())
+dev.off()
+
+pdf("Images/shortest_path_jm.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_jm, net_edges = edges_selection_jm) + 
+  ggplot2::coord_fixed() + 
+  ggplot2::scale_y_continuous(name = NULL) + 
+  ggplot2::scale_x_continuous(name = NULL) +
+  ggplot2::theme(
+    axis.title.x = ggplot2::element_blank(),
+    axis.text.x  = ggplot2::element_blank(),
+    axis.ticks.x = ggplot2::element_blank(),
+    axis.title.y = ggplot2::element_blank(),
+    axis.text.y  = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank(),
+    panel.grid.major = ggplot2::element_blank(), 
+    panel.grid.minor = ggplot2::element_blank())
+dev.off()
+
+
+
+juneda = 63
+soses = 161
+menarguens = 197
+belloch = 209
+
+# Soses-Belloch
+shortest_distance_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'distance', k = 10, show_weight = TRUE)
+shortest_intensity_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'intensity', k = 10, show_weight = TRUE)
+shortest_density_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'density', k = 10, show_weight = TRUE)
+shortest_t_intensity_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'T(intensity)', k = 10, show_weight = TRUE)
+shortest_t_density_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'T(density)', k = 10, show_weight = TRUE)
+shortest_w_int_dens_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'W(l_i)', k = 10, show_weight = TRUE)
+
+# Juneda-Menarguens
+shortest_distance_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'distance', k = 10, show_weight = TRUE)
+shortest_intensity_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'intensity', k = 10, show_weight = TRUE)
+shortest_density_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'density', k = 10, show_weight = TRUE)
+shortest_t_intensity_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'T(intensity)', k = 10, show_weight = TRUE)
+shortest_t_density_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'T(density)', k = 10, show_weight = TRUE)
+shortest_w_int_dens_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'W(l_i)', k = 10, show_weight = TRUE)
+
+
+
+
+all_paths_sb <- all_simple_paths(g, from = soses, to = belloch)
+all_paths_jm <- all_simple_paths(g, from = soses, to = belloch)
+
+# -----------------Plot test 1--------------------------
+
+mode <- 'density'
+
+edge_int <- igraph::edge_attr(g, mode)
+data_df <- data.frame(xcoord = igraph::vertex_attr(g, 'xcoord'), 
+                      ycoord = igraph::vertex_attr(g, 'ycoord'))
+
+node_coords <- data.frame(xcoord = igraph::vertex_attr(g)$xcoord, ycoord = igraph::vertex_attr(g)$ycoord)
+rownames(node_coords) <- igraph::vertex_attr(g)$name
+#get edges, which are pairs of node IDs
+edgelist <- igraph::get.edgelist(g)
+#convert to a four column edge data frame with source and destination coordinates
+edges_df <- data.frame(node_coords[edgelist[,1],], node_coords[edgelist[,2],])
+colnames(edges_df) <- c("xcoord1","ycoord1","xcoord2","ycoord2")
+
+
+hplot <- ggplot2::ggplot(data_df, ggplot2::aes_string(x = 'xcoord', y = 'ycoord')) +
+  viridis::scale_color_viridis(option = 'H') +
+  ggplot2::labs(title = NULL,#paste0(mode, ' Heatmap\n'),
+                color = mode) +
+  ggplot2::geom_segment(ggplot2::aes_string(x = 'xcoord1', y = 'ycoord1', 
+                                            xend = 'xcoord2', yend = 'ycoord2',
+                                            colour = 'edge_int'),
+                        data = edges_df,
+                        size = 0.8) +
+  ggplot2::geom_point(shape = 19,
+                      size = 1.7,
+                      colour="gray") +
+  ggplot2::scale_y_continuous(name = NULL) + 
+  ggplot2::scale_x_continuous(name = NULL) + 
+  ggplot2::theme_bw() +
+  ggplot2::theme(legend.title = ggplot2::element_text(face = "bold"),
+                 plot.title = ggplot2::element_text( size = 14,
+                                                     face = "bold",
+                                                     hjust = 0.5) )
+
+hplot
+
+
+
+
+
+# -----------------Plot test 2--------------------------
+df <- expand.grid(X1 = 1:10, X2 = 1:10)
+df$value <- df$X1 * df$X2
+
+p1 <- ggplot2::ggplot(df, ggplot2::aes(X1, X2)) + ggplot2::geom_tile(ggplot2::aes(fill = value))
+p2 <- p1 + ggplot2::geom_point(ggplot2::aes(size = value))
+
+# Basic form
+p1 + ggplot2::scale_fill_continuous(guide = "colourbar")
+p1  + ggplot2::guides(fill =  ggplot2::guide_colourbar(barwidth = 0.5, barheight = 10)) +  viridis::scale_color_viridis(option = 'H')
+
+
 

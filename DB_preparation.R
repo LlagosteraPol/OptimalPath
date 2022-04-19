@@ -12,12 +12,14 @@ Dades_segments<-data.frame(V1=LNnew$from, V2=LNnew$to)
 Dades_pesos<-data.frame(V1=seg_m)
 Dades_distancies<-data.frame(V1=length_seg_entre_cross)
 
-a = 0.4
-b = 0.6
+a = 0.5
+b = 0.5
 
-transformed_weights <- weighted_data(Dades_pesos, Dades_distancies, a, b)
-transformed_accIntensities <- transformed_weights$a_intensities
-transformed_distances <- transformed_weights$b_distances
+
+ # transformed_weights <- weighted_data(Dades_pesos, Dades_distancies, a, b) # old
+transformed_weights <- weighted_data(cov1 = Dades_pesos, cov2 = Dades_distancies, a = a, b = b, invert_cov1 = FALSE, invert_cov2 = FALSE)
+transformed_accIntensities <- transformed_weights$cov1_comb
+transformed_distances <- transformed_weights$cov2_comb
 all_data <- transformed_distances+transformed_accIntensities # Equation W(l_i)
 
 #all_data <- combine_weights(transformed_accIntensities, transformed_distances, 0.8)

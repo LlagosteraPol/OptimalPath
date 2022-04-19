@@ -8,6 +8,13 @@
 
 #best<- best_paths(graph = g, from = "1", to = "15", weight = "all")
 #top_paths <- best[1:10]
+
+# top paths with yenpathy  library
+shortest_distance <- get_k_shortest_paths(graph = g, from = soses, to = belloc, weight = 'distance', k = 10)
+shortest_weight <- get_k_shortest_paths(graph = g, from = soses, to = belloc, weight = 'weight', k = 10)
+
+
+
   
   source("functions.R")
   source("IgraphModel.R")
