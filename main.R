@@ -41,43 +41,43 @@ pdf(paste0("Images/",weight, "_heatmap.pdf"),height=6,width=13.5)
 dev.off()
 
 short_path_sb <- igraph::shortest_paths(graph = g, 
-                                        from = igraph::V(g)[soses], 
+                                        from = igraph::V(g)[albages], 
                                         to = igraph::V(g)[belloch],
                                         weight = igraph::edge_attr(g, 'distance'),
                                         output = 'both')
 
-nodes_selection_sb <- as.character(short_path_sb$vpath[[1]])
-edges_selection_sb <- as.character(short_path_sb$epath[[1]])
+nodes_selection_ab <- as.character(short_path_sb$vpath[[1]])
+edges_selection_ab <- as.character(short_path_sb$epath[[1]])
 
-short_path_w_int_dens_sb <- igraph::shortest_paths(graph = g, 
-                                     from = igraph::V(g)[soses], 
+short_path_w_int_dens_ab <- igraph::shortest_paths(graph = g, 
+                                     from = igraph::V(g)[albages], 
                                      to = igraph::V(g)[belloch],
                                      weight = igraph::edge_attr(g, 'W(l_i)'),
                                      output = 'both')
 
-nodes_selection_w_sb <- as.character(short_path_w_int_dens_sb$vpath[[1]])
-edges_selection_w_sb <- as.character(short_path_w_int_dens_sb$epath[[1]])
+nodes_selection_w_ab <- as.character(short_path_w_int_dens_sb$vpath[[1]])
+edges_selection_w_ab <- as.character(short_path_w_int_dens_sb$epath[[1]])
 
-short_path_w_int_dens_jm <- igraph::shortest_paths(graph = g, 
-                                                   from = igraph::V(g)[juneda], 
-                                                   to = igraph::V(g)[menarguens],
+short_path_w_int_dens_as <- igraph::shortest_paths(graph = g, 
+                                                   from = igraph::V(g)[alguaire], 
+                                                   to = igraph::V(g)[soses],
                                                    weight = igraph::edge_attr(g, 'W(l_i)'),
                                                    output = 'both')
 
-nodes_selection_w_jm <- as.character(short_path_w_int_dens_jm$vpath[[1]])
-edges_selection_w_jm <- as.character(short_path_w_int_dens_jm$epath[[1]])
+nodes_selection_w_as <- as.character(short_path_w_int_dens_jm$vpath[[1]])
+edges_selection_w_as <- as.character(short_path_w_int_dens_jm$epath[[1]])
 
-short_path_jm <- igraph::shortest_paths(graph = g, 
-                                        from = igraph::V(g)[juneda], 
-                                        to = igraph::V(g)[menarguens],
+short_path_as <- igraph::shortest_paths(graph = g, 
+                                        from = igraph::V(g)[alguaire], 
+                                        to = igraph::V(g)[soses],
                                         weight = igraph::edge_attr(g, 'distance'),
                                         output = 'both')
 
-nodes_selection_jm <- as.character(short_path_jm$vpath[[1]])
-edges_selection_jm <- as.character(short_path_jm$epath[[1]])
+nodes_selection_as <- as.character(short_path_jm$vpath[[1]])
+edges_selection_as <- as.character(short_path_jm$epath[[1]])
 
-pdf("Images/safest_path_sb.pdf",height=6,width=13.5)
-PlotNetwork(g, net_vertices = nodes_selection_w_sb, net_edges = edges_selection_w_sb) + 
+pdf("Images/safest_path_ab.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_w_ab, net_edges = edges_selection_w_ab) + 
   ggplot2::coord_fixed() + 
   ggplot2::scale_y_continuous(name = NULL) + 
   ggplot2::scale_x_continuous(name = NULL) +
@@ -93,8 +93,8 @@ PlotNetwork(g, net_vertices = nodes_selection_w_sb, net_edges = edges_selection_
 dev.off()
 
 
-pdf("Images/safest_path_jm.pdf",height=6,width=13.5)
-PlotNetwork(g, net_vertices = nodes_selection_w_jm, net_edges = edges_selection_w_jm) + 
+pdf("Images/safest_path_as.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_w_as, net_edges = edges_selection_w_as) + 
   ggplot2::coord_fixed() + 
   ggplot2::scale_y_continuous(name = NULL) + 
   ggplot2::scale_x_continuous(name = NULL) +
@@ -109,8 +109,8 @@ PlotNetwork(g, net_vertices = nodes_selection_w_jm, net_edges = edges_selection_
     panel.grid.minor = ggplot2::element_blank())
 dev.off()
 
-pdf("Images/shortest_path_sb.pdf",height=6,width=13.5)
-PlotNetwork(g, net_vertices = nodes_selection_sb, net_edges = edges_selection_sb) + 
+pdf("Images/shortest_path_ab.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_ab, net_edges = edges_selection_ab) + 
   ggplot2::coord_fixed() + 
   ggplot2::scale_y_continuous(name = NULL) + 
   ggplot2::scale_x_continuous(name = NULL) +
@@ -125,8 +125,8 @@ PlotNetwork(g, net_vertices = nodes_selection_sb, net_edges = edges_selection_sb
     panel.grid.minor = ggplot2::element_blank())
 dev.off()
 
-pdf("Images/shortest_path_jm.pdf",height=6,width=13.5)
-PlotNetwork(g, net_vertices = nodes_selection_jm, net_edges = edges_selection_jm) + 
+pdf("Images/shortest_path_as.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_as, net_edges = edges_selection_as) + 
   ggplot2::coord_fixed() + 
   ggplot2::scale_y_continuous(name = NULL) + 
   ggplot2::scale_x_continuous(name = NULL) +
@@ -140,35 +140,30 @@ PlotNetwork(g, net_vertices = nodes_selection_jm, net_edges = edges_selection_jm
     panel.grid.major = ggplot2::element_blank(), 
     panel.grid.minor = ggplot2::element_blank())
 dev.off()
-
-
-
-
-
 
 
 # Soses-Belloch
-shortest_distance_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'distance', k = 10, show_weight = TRUE)
-shortest_intensity_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'intensity', k = 10, show_weight = TRUE)
-shortest_density_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'density', k = 10, show_weight = TRUE)
-shortest_t_intensity_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'T(intensity)', k = 10, show_weight = TRUE)
-shortest_t_density_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'T(density)', k = 10, show_weight = TRUE)
-shortest_w_int_dens_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'W(l_i)', k = 10, show_weight = TRUE)
+shortest_distance_ab    <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'distance', k = 10, show_weight = TRUE)
+shortest_intensity_ab   <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'intensity', k = 10, show_weight = TRUE)
+shortest_density_ab     <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'density', k = 10, show_weight = TRUE)
+shortest_t_intensity_ab <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'T(intensity)', k = 10, show_weight = TRUE)
+shortest_t_density_ab   <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'T(density)', k = 10, show_weight = TRUE)
+shortest_w_int_dens_ab  <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'W(l_i)', k = 10, show_weight = TRUE)
 
 # Juneda-Menarguens
-shortest_distance_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'distance', k = 10, show_weight = TRUE)
-shortest_intensity_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'intensity', k = 10, show_weight = TRUE)
-shortest_density_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'density', k = 10, show_weight = TRUE)
-shortest_t_intensity_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'T(intensity)', k = 10, show_weight = TRUE)
-shortest_t_density_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'T(density)', k = 10, show_weight = TRUE)
-shortest_w_int_dens_jm <- get_k_shortest_paths(graph = g, from = juneda, to = menarguens, weight = 'W(l_i)', k = 10, show_weight = TRUE)
+shortest_distance_as    <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'distance', k = 10, show_weight = TRUE)
+shortest_intensity_as   <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'intensity', k = 10, show_weight = TRUE)
+shortest_density_as     <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'density', k = 10, show_weight = TRUE)
+shortest_t_intensity_as <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'T(intensity)', k = 10, show_weight = TRUE)
+shortest_t_density_as   <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'T(density)', k = 10, show_weight = TRUE)
+shortest_w_int_dens_as  <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'W(l_i)', k = 10, show_weight = TRUE)
 
 
 
 load(file="DB/RData/all_paths_sb.RData")
 load(file="DB/RData/all_paths.RData")
-# all_paths_sb <- all_simple_paths(g, from = soses, to = belloch)
-all_paths_jm <- all_simple_paths(g, from = soses, to = belloch)
+all_paths_ab <- all_simple_paths(g, from = albages, to = belloch)
+all_paths_as <- all_simple_paths(g, from = alguaire, to = soses)
 
 # #-------------------------------------------------------10%------------------------------------------------------------
 
