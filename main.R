@@ -11,10 +11,10 @@ crash_data <- read.csv2('DB/CSV/crash_data.csv')
 colnames(net_data)[5] <-'density'
 
 
-albages = 73
-belloch = 209
-alguaire = 156
+vilanova = 225
 soses = 161
+alcarras = 266
+castelldans = 91
 
 
 g = PrepareIgraph(net_data = net_data, 
@@ -40,44 +40,26 @@ pdf(paste0("Images/",weight, "_heatmap.pdf"),height=6,width=13.5)
     ggplot2::theme(legend.title = ggplot2::element_blank())
 dev.off()
 
-short_path_sb <- igraph::shortest_paths(graph = g, 
-                                        from = igraph::V(g)[albages], 
-                                        to = igraph::V(g)[belloch],
-                                        weight = igraph::edge_attr(g, 'distance'),
-                                        output = 'both')
-
-nodes_selection_ab <- as.character(short_path_sb$vpath[[1]])
-edges_selection_ab <- as.character(short_path_sb$epath[[1]])
-
-short_path_w_int_dens_ab <- igraph::shortest_paths(graph = g, 
-                                     from = igraph::V(g)[albages], 
-                                     to = igraph::V(g)[belloch],
-                                     weight = igraph::edge_attr(g, 'W(l_i)'),
-                                     output = 'both')
-
-nodes_selection_w_ab <- as.character(short_path_w_int_dens_sb$vpath[[1]])
-edges_selection_w_ab <- as.character(short_path_w_int_dens_sb$epath[[1]])
-
-short_path_w_int_dens_as <- igraph::shortest_paths(graph = g, 
-                                                   from = igraph::V(g)[alguaire], 
-                                                   to = igraph::V(g)[soses],
-                                                   weight = igraph::edge_attr(g, 'W(l_i)'),
-                                                   output = 'both')
-
-nodes_selection_w_as <- as.character(short_path_w_int_dens_jm$vpath[[1]])
-edges_selection_w_as <- as.character(short_path_w_int_dens_jm$epath[[1]])
-
-short_path_as <- igraph::shortest_paths(graph = g, 
-                                        from = igraph::V(g)[alguaire], 
+short_path_vs <- igraph::shortest_paths(graph = g, 
+                                        from = igraph::V(g)[vilanova], 
                                         to = igraph::V(g)[soses],
                                         weight = igraph::edge_attr(g, 'distance'),
                                         output = 'both')
 
-nodes_selection_as <- as.character(short_path_jm$vpath[[1]])
-edges_selection_as <- as.character(short_path_jm$epath[[1]])
+nodes_selection_vs <- as.character(short_path_vs$vpath[[1]])
+edges_selection_vs <- as.character(short_path_vs$epath[[1]])
 
-pdf("Images/safest_path_ab.pdf",height=6,width=13.5)
-PlotNetwork(g, net_vertices = nodes_selection_w_ab, net_edges = edges_selection_w_ab) + 
+short_path_w_int_dens_vs <- igraph::shortest_paths(graph = g, 
+                                     from = igraph::V(g)[vilanova], 
+                                     to = igraph::V(g)[soses],
+                                     weight = igraph::edge_attr(g, 'W(l_i)'),
+                                     output = 'both')
+
+nodes_selection_w_vs <- as.character(short_path_w_int_dens_vs$vpath[[1]])
+edges_selection_w_vs <- as.character(short_path_w_int_dens_vs$epath[[1]])
+
+pdf("Images/safest_path_vs.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_w_vs, net_edges = edges_selection_w_vs) + 
   ggplot2::coord_fixed() + 
   ggplot2::scale_y_continuous(name = NULL) + 
   ggplot2::scale_x_continuous(name = NULL) +
@@ -92,9 +74,8 @@ PlotNetwork(g, net_vertices = nodes_selection_w_ab, net_edges = edges_selection_
         panel.grid.minor = ggplot2::element_blank())
 dev.off()
 
-
-pdf("Images/safest_path_as.pdf",height=6,width=13.5)
-PlotNetwork(g, net_vertices = nodes_selection_w_as, net_edges = edges_selection_w_as) + 
+pdf("Images/shortest_path_vs.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_vs, net_edges = edges_selection_vs) + 
   ggplot2::coord_fixed() + 
   ggplot2::scale_y_continuous(name = NULL) + 
   ggplot2::scale_x_continuous(name = NULL) +
@@ -109,8 +90,28 @@ PlotNetwork(g, net_vertices = nodes_selection_w_as, net_edges = edges_selection_
     panel.grid.minor = ggplot2::element_blank())
 dev.off()
 
-pdf("Images/shortest_path_ab.pdf",height=6,width=13.5)
-PlotNetwork(g, net_vertices = nodes_selection_ab, net_edges = edges_selection_ab) + 
+
+short_path_w_int_dens_ac <- igraph::shortest_paths(graph = g, 
+                                                   from = igraph::V(g)[alcarras], 
+                                                   to = igraph::V(g)[castelldans],
+                                                   weight = igraph::edge_attr(g, 'W(l_i)'),
+                                                   output = 'both')
+
+nodes_selection_w_ac <- as.character(short_path_w_int_dens_ac$vpath[[1]])
+edges_selection_w_ac <- as.character(short_path_w_int_dens_ac$epath[[1]])
+
+short_path_ac <- igraph::shortest_paths(graph = g, 
+                                        from = igraph::V(g)[alcarras], 
+                                        to = igraph::V(g)[castelldans],
+                                        weight = igraph::edge_attr(g, 'distance'),
+                                        output = 'both')
+
+nodes_selection_ac <- as.character(short_path_ac$vpath[[1]])
+edges_selection_ac <- as.character(short_path_ac$epath[[1]])
+
+
+pdf("Images/safest_path_ac.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_w_ac, net_edges = edges_selection_w_ac) + 
   ggplot2::coord_fixed() + 
   ggplot2::scale_y_continuous(name = NULL) + 
   ggplot2::scale_x_continuous(name = NULL) +
@@ -125,8 +126,8 @@ PlotNetwork(g, net_vertices = nodes_selection_ab, net_edges = edges_selection_ab
     panel.grid.minor = ggplot2::element_blank())
 dev.off()
 
-pdf("Images/shortest_path_as.pdf",height=6,width=13.5)
-PlotNetwork(g, net_vertices = nodes_selection_as, net_edges = edges_selection_as) + 
+pdf("Images/shortest_path_ac.pdf",height=6,width=13.5)
+PlotNetwork(g, net_vertices = nodes_selection_ac, net_edges = edges_selection_ac) + 
   ggplot2::coord_fixed() + 
   ggplot2::scale_y_continuous(name = NULL) + 
   ggplot2::scale_x_continuous(name = NULL) +
@@ -143,69 +144,69 @@ dev.off()
 
 
 # Soses-Belloch
-shortest_distance_ab    <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'distance', k = 10, show_weight = TRUE)
-shortest_intensity_ab   <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'intensity', k = 10, show_weight = TRUE)
-shortest_density_ab     <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'density', k = 10, show_weight = TRUE)
-shortest_t_intensity_ab <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'T(intensity)', k = 10, show_weight = TRUE)
-shortest_t_density_ab   <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'T(density)', k = 10, show_weight = TRUE)
-shortest_w_int_dens_ab  <- get_k_shortest_paths(graph = g, from = albages, to = belloch, weight = 'W(l_i)', k = 10, show_weight = TRUE)
+shortest_distance_vs    <- get_k_shortest_paths(graph = g, from = vilanova, to = soses, weight = 'distance', k = 10, show_weight = TRUE)
+shortest_intensity_vs   <- get_k_shortest_paths(graph = g, from = vilanova, to = soses, weight = 'intensity', k = 10, show_weight = TRUE)
+shortest_density_vs     <- get_k_shortest_paths(graph = g, from = vilanova, to = soses, weight = 'density', k = 10, show_weight = TRUE)
+shortest_t_intensity_vs <- get_k_shortest_paths(graph = g, from = vilanova, to = soses, weight = 'T(intensity)', k = 10, show_weight = TRUE)
+shortest_t_density_vs   <- get_k_shortest_paths(graph = g, from = vilanova, to = soses, weight = 'T(density)', k = 10, show_weight = TRUE)
+shortest_w_int_dens_vs  <- get_k_shortest_paths(graph = g, from = vilanova, to = soses, weight = 'W(l_i)', k = 10, show_weight = TRUE)
 
 # Juneda-Menarguens
-shortest_distance_as    <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'distance', k = 10, show_weight = TRUE)
-shortest_intensity_as   <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'intensity', k = 10, show_weight = TRUE)
-shortest_density_as     <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'density', k = 10, show_weight = TRUE)
-shortest_t_intensity_as <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'T(intensity)', k = 10, show_weight = TRUE)
-shortest_t_density_as   <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'T(density)', k = 10, show_weight = TRUE)
-shortest_w_int_dens_as  <- get_k_shortest_paths(graph = g, from = alguaire, to = soses, weight = 'W(l_i)', k = 10, show_weight = TRUE)
+shortest_distance_ac    <- get_k_shortest_paths(graph = g, from = alcarras, to = castelldans, weight = 'distance', k = 10, show_weight = TRUE)
+shortest_intensity_ac   <- get_k_shortest_paths(graph = g, from = alcarras, to = castelldans, weight = 'intensity', k = 10, show_weight = TRUE)
+shortest_density_ac     <- get_k_shortest_paths(graph = g, from = alcarras, to = castelldans, weight = 'density', k = 10, show_weight = TRUE)
+shortest_t_intensity_ac <- get_k_shortest_paths(graph = g, from = alcarras, to = castelldans, weight = 'T(intensity)', k = 10, show_weight = TRUE)
+shortest_t_density_ac   <- get_k_shortest_paths(graph = g, from = alcarras, to = castelldans, weight = 'T(density)', k = 10, show_weight = TRUE)
+shortest_w_int_dens_ac  <- get_k_shortest_paths(graph = g, from = alcarras, to = castelldans, weight = 'W(l_i)', k = 10, show_weight = TRUE)
 
 
 
-load(file="DB/RData/all_paths_sb.RData")
+load(file="DB/RData/all_paths_vs.RData")
 load(file="DB/RData/all_paths.RData")
-all_paths_ab <- all_simple_paths(g, from = albages, to = belloch)
-all_paths_as <- all_simple_paths(g, from = alguaire, to = soses)
+all_paths_vs <- all_simple_paths(g, from = vilanova, to = soses)
+all_paths_ac <- all_simple_paths(g, from = alcarras, to = castelldans)
 
 # #-------------------------------------------------------10%------------------------------------------------------------
 
-gd10 = filter_graph(graph=g, filter=10, weight='distance', paths = all_paths_sb)
+gd10 = filter_graph(graph=g, filter=10, weight='distance', paths = all_paths_vs)
 sos_bell_d10 = rate_paths(graph = gd10, from = soses, to = belloc)
 jun_men_d10 = rate_paths(graph = gd10, from = juneda, to = menarguens)
 
-gi10 = filter_graph(graph=g, filter=10, weight='density', paths = all_paths_jm)
+gi10 = filter_graph(graph=g, filter=10, weight='density', paths = all_paths_ac)
 sos_bell_i10 = rate_paths(graph = gi10, from = soses, to = belloc)
 jun_men_i10 = rate_paths(graph = gi10, from = juneda, to = menarguens)
 
 
 # #-------------------------------------------------------25%------------------------------------------------------------
 
-gd25 = filter_graph(graph=g, filter=25, weight='distance', paths = all_paths_sb)
+gd25 = filter_graph(graph=g, filter=25, weight='distance', paths = all_paths_vs)
 sos_bell_d25 = rate_paths(graph = gd25, from = soses, to = belloc)
 jun_men_d25 = rate_paths(graph = gd25, from = juneda, to = menarguens)
 
 gi25 = filter_graph(graph=g, filter=25, weight='density')
-sos_bell_i25 = rate_paths(graph = gi25, from = soses, to = belloc, paths = all_paths_jm)
+sos_bell_i25 = rate_paths(graph = gi25, from = soses, to = belloc, paths = all_paths_ac)
 jun_men_i25 = rate_paths(graph = gi25, from = juneda, to = menarguens)
 
 
 # #-------------------------------------------------------50%------------------------------------------------------------
 
-gd50 = filter_graph(graph=g, filter=50, weight='distance', paths = all_paths_sb)
+gd50 = filter_graph(graph=g, filter=50, weight='distance', paths = all_paths_vs)
 sos_bell_d50 = rate_paths(graph = gd50, from = soses, to = belloc)
 jun_men_d50 = rate_paths(graph = gd50, from = juneda, to = menarguens)
 
 gi50 = filter_graph(graph=g, filter=50, weight='density')
-sos_bell_i50 = rate_paths(graph = gi50, from = soses, to = belloc, paths = all_paths_jm)
+sos_bell_i50 = rate_paths(graph = gi50, from = soses, to = belloc, paths = all_paths_ac)
 jun_men_i50 = rate_paths(graph = gi50, from = juneda, to = menarguens)
 
 
 # #-------------------------------------------------------75%------------------------------------------------------------
 
-gd75 = filter_graph(graph=g, filter=75, weight='distance', paths = all_paths_sb)
+gd75 = filter_graph(graph=g, filter=75, weight='distance', paths = all_paths_vs)
 sos_bell_d75 = rate_paths(graph = gd75, from = soses, to = belloc)
 jun_men_d75 = rate_paths(graph = gd75, from = juneda, to = menarguens)
 
-gi75 = filter_graph(graph=g, filter=75, weight='density', paths = all_paths_sb)
-sos_bell_i75 = rate_paths(graph = gi75, from = soses, to = belloc, paths = all_paths_jm)
+gi75 = filter_graph(graph=g, filter=75, weight='density', paths = all_paths_vs)
+sos_bell_i75 = rate_paths(graph = gi75, from = soses, to = belloc, paths = all_paths_ac)
 jun_men_i75 = rate_paths(graph = gi75, from = juneda, to = menarguens)
 
 
