@@ -1,8 +1,6 @@
 
 
 rm(list = ls())
-
-source("plots.R")
 source("functions.R")
 
 
@@ -160,8 +158,9 @@ shortest_w_int_dens_jm <- get_k_shortest_paths(graph = g, from = juneda, to = me
 
 
 
-
-all_paths_sb <- all_simple_paths(g, from = soses, to = belloch)
+load(file="DB/RData/all_paths_sb.RData")
+load(file="DB/RData/all_paths.RData")
+# all_paths_sb <- all_simple_paths(g, from = soses, to = belloch)
 all_paths_jm <- all_simple_paths(g, from = soses, to = belloch)
 
 # #-------------------------------------------------------10%------------------------------------------------------------
