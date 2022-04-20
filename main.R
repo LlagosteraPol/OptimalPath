@@ -11,6 +11,12 @@ crash_data <- read.csv2('DB/CSV/crash_data.csv')
 colnames(net_data)[5] <-'density'
 
 
+albages = 73
+belloch = 209
+alguaire = 156
+soses = 161
+
+
 g = PrepareIgraph(net_data = net_data, 
                   node_data = node_data, 
                   cov1 = 'intensity', 
@@ -24,12 +30,14 @@ g_df <- as.data.frame(igraph::as_data_frame(g))
 
 
 # Heatmap
-pdf("Images/density_heatmap.pdf",height=6,width=13.5)
-  PlotNetwork(g, mode = 'density') + 
+weight <- 'density'
+pdf(paste0("Images/",weight, "_heatmap.pdf"),height=6,width=13.5)
+  PlotNetwork(g, mode = weight) + 
     ggplot2::coord_fixed() + 
     ggplot2::scale_y_continuous(name = NULL) + 
     ggplot2::scale_x_continuous(name = NULL) +
-    ggplot2::labs(title = NULL, color = 'density') 
+    ggplot2::labs(title = NULL, color = weight) +
+    ggplot2::theme(legend.title = ggplot2::element_blank())
 dev.off()
 
 short_path_sb <- igraph::shortest_paths(graph = g, 
@@ -135,10 +143,9 @@ dev.off()
 
 
 
-juneda = 63
-soses = 161
-menarguens = 197
-belloch = 209
+
+
+
 
 # Soses-Belloch
 shortest_distance_sb <- get_k_shortest_paths(graph = g, from = soses, to = belloch, weight = 'distance', k = 10, show_weight = TRUE)
