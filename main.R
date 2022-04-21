@@ -194,7 +194,7 @@ gdi10 = filter_graph(graph=g, filter=10, weight='distance')
 vs_di10 = rate_paths(graph = gdi10, from = vilanova, to = soses)
 ac_di10 = rate_paths(graph = gdi10, from = alcarras, to = castelldans)
 
-gde10 = filter_graph(graph=g, filter=10, weight='density', paths = all_paths_ac)
+gde10 = filter_graph(graph=g, filter=10, weight='density')
 vs_de10 = rate_paths(graph = gde10, from = vilanova, to = soses)
 ac_de10 = rate_paths(graph = gde10, from = alcarras, to = castelldans)
 
