@@ -31,6 +31,23 @@ g_df <- as.data.frame(igraph::as_data_frame(g))
 
 
 # Heatmaps
+load(file="DB/RData/Linear_pixel_final_18_Juny_2021_ultima_copia.RData")
+ww_df <- as.data.frame(ww)
+
+difusor_heatmap <- ggplot2::ggplot(ww_df, ggplot2::aes_string(x = 'xc', y = 'yc')) +
+                    viridis::scale_color_viridis(option = 'H') +
+                    ggplot2::labs(title = NULL,color = ww_df$values) +
+                    ggplot2::geom_point(shape = 15, size = 0.5,
+                                        ggplot2::aes(color = values) )+
+                    ggplot2::scale_y_continuous(name = NULL) + 
+                    ggplot2::scale_x_continuous(name = NULL) +
+                    ggplot2::theme_bw() +
+                    ggplot2::theme(legend.title = ggplot2::element_text(face = "bold"),
+                                   plot.title = ggplot2::element_text( size = 14,
+                                                                       face = "bold",
+                                                                       hjust = 0.5) )+
+                    ggplot2::coord_fixed() +
+                    ggplot2::theme(legend.title = ggplot2::element_blank())
 
 intensity_heatmap <- PlotNetwork(g, mode = 'intensity') + 
                      ggplot2::coord_fixed() + 
@@ -57,11 +74,17 @@ wli_heatmap <- PlotNetwork(g, mode = 'W(l_i)') +
                  ggplot2::theme(legend.title = ggplot2::element_blank())
 
 ggplot2::ggsave(
-  filename = "Images/heatmaps.pdf", 
-  plot = gridExtra::marrangeGrob(list(intensity_heatmap, wli_heatmap, density_heatmap), 
-                                 nrow=2, 
+  filename = "Images/heatmaps_4.pdf",
+  plot = gridExtra::marrangeGrob(list(difusor_heatmap, density_heatmap, intensity_heatmap, wli_heatmap ),
+                                 nrow=2,
                                  ncol=2,
-                                 top=NULL), 
+                                 top=NULL),
+  width = 10, height = 7
+)
+
+ggplot2::ggsave(
+  filename = "Images/heatmaps_4_2.pdf", 
+  plot = gridExtra::grid.arrange(difusor_heatmap, intensity_heatmap, density_heatmap, wli_heatmap, layout_matrix = rbind(c(1,2),c(3,4))), 
   width = 10, height = 7
 )
 
