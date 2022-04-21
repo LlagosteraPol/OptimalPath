@@ -190,46 +190,46 @@ all_paths_ac <- all_simple_paths(g, from = alcarras, to = castelldans)
 
 # #-------------------------------------------------------10%------------------------------------------------------------
 
-gd10 = filter_graph(graph=g, filter=10, weight='distance')
-sos_bell_d10 = rate_paths(graph = gd10, from = soses, to = belloc)
-jun_men_d10 = rate_paths(graph = gd10, from = juneda, to = menarguens)
+gdi10 = filter_graph(graph=g, filter=10, weight='distance')
+sos_bell_di10 = rate_paths(graph = gdi10, from = soses, to = belloc)
+jun_men_di10 = rate_paths(graph = gdi10, from = juneda, to = menarguens)
 
-gi10 = filter_graph(graph=g, filter=10, weight='density', paths = all_paths_ac)
-sos_bell_i10 = rate_paths(graph = gi10, from = soses, to = belloc)
-jun_men_i10 = rate_paths(graph = gi10, from = juneda, to = menarguens)
+gde10 = filter_graph(graph=g, filter=10, weight='density', paths = all_paths_ac)
+sos_bell_de10 = rate_paths(graph = gde10, from = soses, to = belloc)
+jun_men_de10 = rate_paths(graph = gde10, from = juneda, to = menarguens)
 
 
 # #-------------------------------------------------------25%------------------------------------------------------------
 
-gd25 = filter_graph(graph=g, filter=25, weight='distance')
-sos_bell_d25 = rate_paths(graph = gd25, from = soses, to = belloc)
-jun_men_d25 = rate_paths(graph = gd25, from = juneda, to = menarguens)
+gdi25 = filter_graph(graph=g, filter=25, weight='distance')
+sos_bell_di25 = rate_paths(graph = gdi25, from = soses, to = belloc)
+jun_men_di25 = rate_paths(graph = gdi25, from = juneda, to = menarguens)
 
-gi25 = filter_graph(graph=g, filter=25, weight='density')
-sos_bell_i25 = rate_paths(graph = gi25, from = soses, to = belloc)
-jun_men_i25 = rate_paths(graph = gi25, from = juneda, to = menarguens)
+gde25 = filter_graph(graph=g, filter=25, weight='density')
+sos_bell_de25 = rate_paths(graph = gde25, from = soses, to = belloc)
+jun_men_de25 = rate_paths(graph = gde25, from = juneda, to = menarguens)
 
 
 # #-------------------------------------------------------50%------------------------------------------------------------
 
-gd50 = filter_graph(graph=g, filter=50, weight='distance')
-sos_bell_d50 = rate_paths(graph = gd50, from = soses, to = belloc)
-jun_men_d50 = rate_paths(graph = gd50, from = juneda, to = menarguens)
+gdi50 = filter_graph(graph=g, filter=50, weight='distance')
+sos_bell_di50 = rate_paths(graph = gdi50, from = soses, to = belloc)
+jun_men_di50 = rate_paths(graph = gdi50, from = juneda, to = menarguens)
 
-gi50 = filter_graph(graph=g, filter=50, weight='density')
-sos_bell_i50 = rate_paths(graph = gi50, from = soses, to = belloc)
-jun_men_i50 = rate_paths(graph = gi50, from = juneda, to = menarguens)
+gde50 = filter_graph(graph=g, filter=50, weight='density')
+sos_bell_de50 = rate_paths(graph = gde50, from = soses, to = belloc)
+jun_men_de50 = rate_paths(graph = gde50, from = juneda, to = menarguens)
 
 
 # #-------------------------------------------------------75%------------------------------------------------------------
 
-gd75 = filter_graph(graph=g, filter=75, weight='distance')
-sos_bell_d75 = rate_paths(graph = gd75, from = soses, to = belloc)
-jun_men_d75 = rate_paths(graph = gd75, from = juneda, to = menarguens)
+gdi75 = filter_graph(graph=g, filter=75, weight='distance')
+sos_bell_di75 = rate_paths(graph = gdi75, from = soses, to = belloc)
+jun_men_di75 = rate_paths(graph = gdi75, from = juneda, to = menarguens)
 
-gi75 = filter_graph(graph=g, filter=75, weight='density')
-sos_bell_i75 = rate_paths(graph = gi75, from = soses, to = belloc)
-jun_men_i75 = rate_paths(graph = gi75, from = juneda, to = menarguens)
+gde75 = filter_graph(graph=g, filter=75, weight='density')
+sos_bell_de75 = rate_paths(graph = gde75, from = soses, to = belloc)
+jun_men_de75 = rate_paths(graph = gde75, from = juneda, to = menarguens)
 
 
 # -----------------Plot test 1--------------------------
