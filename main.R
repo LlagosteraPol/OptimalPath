@@ -191,42 +191,42 @@ all_paths_ac <- all_simple_paths(g, from = alcarras, to = castelldans)
 # #-------------------------------------------------------10%------------------------------------------------------------
 
 gdi10 = filter_graph(graph=g, filter=10, weight='distance')
-sos_bell_di10 = rate_paths(graph = gdi10, from = vilanova, to = soses)
-jun_men_di10 = rate_paths(graph = gdi10, from = alcarras, to = castelldans)
+vs_di10 = rate_paths(graph = gdi10, from = vilanova, to = soses)
+ac_di10 = rate_paths(graph = gdi10, from = alcarras, to = castelldans)
 
 gde10 = filter_graph(graph=g, filter=10, weight='density', paths = all_paths_ac)
-sos_bell_de10 = rate_paths(graph = gde10, from = vilanova, to = soses)
-jun_men_de10 = rate_paths(graph = gde10, from = alcarras, to = castelldans)
+vs_de10 = rate_paths(graph = gde10, from = vilanova, to = soses)
+ac_de10 = rate_paths(graph = gde10, from = alcarras, to = castelldans)
 
 
 # #-------------------------------------------------------25%------------------------------------------------------------
 
 gdi25 = filter_graph(graph=g, filter=25, weight='distance')
-sos_bell_di25 = rate_paths(graph = gdi25, from = vilanova, to = soses)
-jun_men_di25 = rate_paths(graph = gdi25, from = alcarras, to = castelldans)
+vs_di25 = rate_paths(graph = gdi25, from = vilanova, to = soses)
+ac_di25 = rate_paths(graph = gdi25, from = alcarras, to = castelldans)
 
 gde25 = filter_graph(graph=g, filter=25, weight='density')
-sos_bell_de25 = rate_paths(graph = gde25, from = vilanova, to = soses)
-jun_men_de25 = rate_paths(graph = gde25, from = alcarras, to = castelldans)
+vs_de25 = rate_paths(graph = gde25, from = vilanova, to = soses)
+ac_de25 = rate_paths(graph = gde25, from = alcarras, to = castelldans)
 
 
 # #-------------------------------------------------------50%------------------------------------------------------------
 
 gdi50 = filter_graph(graph=g, filter=50, weight='distance')
-sos_bell_di50 = rate_paths(graph = gdi50, from = vilanova, to = soses)
-jun_men_di50 = rate_paths(graph = gdi50, from = alcarras, to = castelldans)
+vs_di50 = rate_paths(graph = gdi50, from = vilanova, to = soses)
+ac_di50 = rate_paths(graph = gdi50, from = alcarras, to = castelldans)
 
 gde50 = filter_graph(graph=g, filter=50, weight='density')
-sos_bell_de50 = rate_paths(graph = gde50, from = vilanova, to = soses)
-jun_men_de50 = rate_paths(graph = gde50, from = alcarras, to = castelldans)
+vs_de50 = rate_paths(graph = gde50, from = vilanova, to = soses)
+ac_de50 = rate_paths(graph = gde50, from = alcarras, to = castelldans)
 
 
 # #-------------------------------------------------------75%------------------------------------------------------------
 
 gdi75 = filter_graph(graph=g, filter=75, weight='distance')
-sos_bell_di75 = rate_paths(graph = gdi75, from = vilanova, to = soses)
-jun_men_di75 = rate_paths(graph = gdi75, from = alcarras, to = castelldans)
+vs_di75 = rate_paths(graph = gdi75, from = vilanova, to = soses)
+ac_di75 = rate_paths(graph = gdi75, from = alcarras, to = castelldans)
 
 gde75 = filter_graph(graph=g, filter=75, weight='density')
-sos_bell_de75 = rate_paths(graph = gde75, from = vilanova, to = soses)
-jun_men_de75 = rate_paths(graph = gde75, from = alcarras, to = castelldans)
+vs_de75 = rate_paths(graph = gde75, from = vilanova, to = soses)
+ac_de75 = rate_paths(graph = gde75, from = alcarras, to = castelldans)
