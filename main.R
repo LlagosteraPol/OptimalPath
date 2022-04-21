@@ -228,7 +228,7 @@ sos_bell_d75 = rate_paths(graph = gd75, from = soses, to = belloc)
 jun_men_d75 = rate_paths(graph = gd75, from = juneda, to = menarguens)
 
 gi75 = filter_graph(graph=g, filter=75, weight='density')
-sos_bell_i75 = rate_paths(graph = gi75, from = soses, to = belloc, paths = all_paths_ac)
+sos_bell_i75 = rate_paths(graph = gi75, from = soses, to = belloc)
 jun_men_i75 = rate_paths(graph = gi75, from = juneda, to = menarguens)
 
 
