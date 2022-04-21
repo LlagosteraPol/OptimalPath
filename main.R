@@ -191,100 +191,42 @@ all_paths_ac <- all_simple_paths(g, from = alcarras, to = castelldans)
 # #-------------------------------------------------------10%------------------------------------------------------------
 
 gdi10 = filter_graph(graph=g, filter=10, weight='distance')
-sos_bell_di10 = rate_paths(graph = gdi10, from = soses, to = belloc)
-jun_men_di10 = rate_paths(graph = gdi10, from = juneda, to = menarguens)
+sos_bell_di10 = rate_paths(graph = gdi10, from = vilanova, to = soses)
+jun_men_di10 = rate_paths(graph = gdi10, from = alcarras, to = castelldans)
 
 gde10 = filter_graph(graph=g, filter=10, weight='density', paths = all_paths_ac)
-sos_bell_de10 = rate_paths(graph = gde10, from = soses, to = belloc)
-jun_men_de10 = rate_paths(graph = gde10, from = juneda, to = menarguens)
+sos_bell_de10 = rate_paths(graph = gde10, from = vilanova, to = soses)
+jun_men_de10 = rate_paths(graph = gde10, from = alcarras, to = castelldans)
 
 
 # #-------------------------------------------------------25%------------------------------------------------------------
 
 gdi25 = filter_graph(graph=g, filter=25, weight='distance')
-sos_bell_di25 = rate_paths(graph = gdi25, from = soses, to = belloc)
-jun_men_di25 = rate_paths(graph = gdi25, from = juneda, to = menarguens)
+sos_bell_di25 = rate_paths(graph = gdi25, from = vilanova, to = soses)
+jun_men_di25 = rate_paths(graph = gdi25, from = alcarras, to = castelldans)
 
 gde25 = filter_graph(graph=g, filter=25, weight='density')
-sos_bell_de25 = rate_paths(graph = gde25, from = soses, to = belloc)
-jun_men_de25 = rate_paths(graph = gde25, from = juneda, to = menarguens)
+sos_bell_de25 = rate_paths(graph = gde25, from = vilanova, to = soses)
+jun_men_de25 = rate_paths(graph = gde25, from = alcarras, to = castelldans)
 
 
 # #-------------------------------------------------------50%------------------------------------------------------------
 
 gdi50 = filter_graph(graph=g, filter=50, weight='distance')
-sos_bell_di50 = rate_paths(graph = gdi50, from = soses, to = belloc)
-jun_men_di50 = rate_paths(graph = gdi50, from = juneda, to = menarguens)
+sos_bell_di50 = rate_paths(graph = gdi50, from = vilanova, to = soses)
+jun_men_di50 = rate_paths(graph = gdi50, from = alcarras, to = castelldans)
 
 gde50 = filter_graph(graph=g, filter=50, weight='density')
-sos_bell_de50 = rate_paths(graph = gde50, from = soses, to = belloc)
-jun_men_de50 = rate_paths(graph = gde50, from = juneda, to = menarguens)
+sos_bell_de50 = rate_paths(graph = gde50, from = vilanova, to = soses)
+jun_men_de50 = rate_paths(graph = gde50, from = alcarras, to = castelldans)
 
 
 # #-------------------------------------------------------75%------------------------------------------------------------
 
 gdi75 = filter_graph(graph=g, filter=75, weight='distance')
-sos_bell_di75 = rate_paths(graph = gdi75, from = soses, to = belloc)
-jun_men_di75 = rate_paths(graph = gdi75, from = juneda, to = menarguens)
+sos_bell_di75 = rate_paths(graph = gdi75, from = vilanova, to = soses)
+jun_men_di75 = rate_paths(graph = gdi75, from = alcarras, to = castelldans)
 
 gde75 = filter_graph(graph=g, filter=75, weight='density')
-sos_bell_de75 = rate_paths(graph = gde75, from = soses, to = belloc)
-jun_men_de75 = rate_paths(graph = gde75, from = juneda, to = menarguens)
-
-
-# -----------------Plot test 1--------------------------
-
-mode <- 'density'
-
-edge_int <- igraph::edge_attr(g, mode)
-data_df <- data.frame(xcoord = igraph::vertex_attr(g, 'xcoord'), 
-                      ycoord = igraph::vertex_attr(g, 'ycoord'))
-
-node_coords <- data.frame(xcoord = igraph::vertex_attr(g)$xcoord, ycoord = igraph::vertex_attr(g)$ycoord)
-rownames(node_coords) <- igraph::vertex_attr(g)$name
-#get edges, which are pairs of node IDs
-edgelist <- igraph::get.edgelist(g)
-#convert to a four column edge data frame with source and destination coordinates
-edges_df <- data.frame(node_coords[edgelist[,1],], node_coords[edgelist[,2],])
-colnames(edges_df) <- c("xcoord1","ycoord1","xcoord2","ycoord2")
-
-
-hplot <- ggplot2::ggplot(data_df, ggplot2::aes_string(x = 'xcoord', y = 'ycoord')) +
-  viridis::scale_color_viridis(option = 'H') +
-  ggplot2::labs(title = NULL,#paste0(mode, ' Heatmap\n'),
-                color = mode) +
-  ggplot2::geom_segment(ggplot2::aes_string(x = 'xcoord1', y = 'ycoord1', 
-                                            xend = 'xcoord2', yend = 'ycoord2',
-                                            colour = 'edge_int'),
-                        data = edges_df,
-                        size = 0.8) +
-  ggplot2::geom_point(shape = 19,
-                      size = 1.7,
-                      colour="gray") +
-  ggplot2::scale_y_continuous(name = NULL) + 
-  ggplot2::scale_x_continuous(name = NULL) + 
-  ggplot2::theme_bw() +
-  ggplot2::theme(legend.title = ggplot2::element_text(face = "bold"),
-                 plot.title = ggplot2::element_text( size = 14,
-                                                     face = "bold",
-                                                     hjust = 0.5) )
-
-hplot
-
-
-
-
-
-# -----------------Plot test 2--------------------------
-df <- expand.grid(X1 = 1:10, X2 = 1:10)
-df$value <- df$X1 * df$X2
-
-p1 <- ggplot2::ggplot(df, ggplot2::aes(X1, X2)) + ggplot2::geom_tile(ggplot2::aes(fill = value))
-p2 <- p1 + ggplot2::geom_point(ggplot2::aes(size = value))
-
-# Basic form
-p1 + ggplot2::scale_fill_continuous(guide = "colourbar")
-p1  + ggplot2::guides(fill =  ggplot2::guide_colourbar(barwidth = 0.5, barheight = 10)) +  viridis::scale_color_viridis(option = 'H')
-
-
-
+sos_bell_de75 = rate_paths(graph = gde75, from = vilanova, to = soses)
+jun_men_de75 = rate_paths(graph = gde75, from = alcarras, to = castelldans)
