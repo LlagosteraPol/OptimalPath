@@ -30,15 +30,51 @@ g = PrepareIgraph(net_data = net_data,
 g_df <- as.data.frame(igraph::as_data_frame(g))
 
 
-# Heatmap
-weight <- 'density'
-pdf(paste0("Images/",weight, "_heatmap.pdf"),height=6,width=13.5)
-  PlotNetwork(g, mode = weight) + 
-    ggplot2::coord_fixed() + 
-    ggplot2::scale_y_continuous(name = NULL) + 
-    ggplot2::scale_x_continuous(name = NULL) +
-    ggplot2::labs(title = NULL, color = weight) +
-    ggplot2::theme(legend.title = ggplot2::element_blank())
+# Heatmaps
+
+intensity_heatmap <- PlotNetwork(g, mode = 'intensity') + 
+                     ggplot2::coord_fixed() + 
+                     ggplot2::scale_y_continuous(name = NULL) + 
+                     ggplot2::scale_x_continuous(name = NULL) +
+                     ggplot2::labs(title = NULL, color = weight) +
+                     ggplot2::theme(legend.title = ggplot2::element_blank())
+
+density_heatmap <- PlotNetwork(g, mode = 'density') + 
+                     ggplot2::coord_fixed() + 
+                     ggplot2::scale_y_continuous(name = NULL) + 
+                     ggplot2::scale_x_continuous(name = NULL) +
+                     ggplot2::labs(title = NULL, color = weight) +
+                     ggplot2::theme(legend.title = ggplot2::element_blank()) + 
+                     ggplot2::geom_point(shape = 19,
+                                        size = 0.6,
+                                        colour="gray")
+
+wli_heatmap <- PlotNetwork(g, mode = 'W(l_i)') + 
+                 ggplot2::coord_fixed() + 
+                 ggplot2::scale_y_continuous(name = NULL) + 
+                 ggplot2::scale_x_continuous(name = NULL) +
+                 ggplot2::labs(title = NULL, color = weight) +
+                 ggplot2::theme(legend.title = ggplot2::element_blank())
+
+ggplot2::ggsave(
+  filename = "Images/heatmaps.pdf", 
+  plot = gridExtra::marrangeGrob(list(intensity_heatmap, wli_heatmap, density_heatmap), 
+                                 nrow=2, 
+                                 ncol=2,
+                                 top=NULL), 
+  width = 10, height = 7
+)
+
+pdf(paste0("Images/intensity_heatmap.pdf"),height=6,width=13.5)
+intensity_heatmap
+dev.off()
+
+pdf(paste0("Images/density_heatmap.pdf"),height=6,width=13.5)
+density_heatmap
+dev.off()
+
+pdf(paste0("Images/wli_heatmap.pdf"),height=6,width=13.5)
+wli_heatmap
 dev.off()
 
 short_path_vs <- igraph::shortest_paths(graph = g, 
@@ -165,7 +201,7 @@ ggplot2::ggsave(
 # dev.off()
 
 
-# Soses-Belloch
+# Vilanova-Soses
 shortest_distance_vs    <- get_k_shortest_paths(graph = g, from = vilanova, to = soses, weight = 'distance', k = 10, show_weight = TRUE)
 shortest_intensity_vs   <- get_k_shortest_paths(graph = g, from = vilanova, to = soses, weight = 'intensity', k = 10, show_weight = TRUE)
 shortest_density_vs     <- get_k_shortest_paths(graph = g, from = vilanova, to = soses, weight = 'density', k = 10, show_weight = TRUE)
@@ -173,7 +209,7 @@ shortest_t_intensity_vs <- get_k_shortest_paths(graph = g, from = vilanova, to =
 shortest_t_density_vs   <- get_k_shortest_paths(graph = g, from = vilanova, to = soses, weight = 'T(density)', k = 10, show_weight = TRUE)
 shortest_w_int_dens_vs  <- get_k_shortest_paths(graph = g, from = vilanova, to = soses, weight = 'W(l_i)', k = 10, show_weight = TRUE)
 
-# Juneda-Menarguens
+# Alcarras-Castelldans
 shortest_distance_ac    <- get_k_shortest_paths(graph = g, from = alcarras, to = castelldans, weight = 'distance', k = 10, show_weight = TRUE)
 shortest_intensity_ac   <- get_k_shortest_paths(graph = g, from = alcarras, to = castelldans, weight = 'intensity', k = 10, show_weight = TRUE)
 shortest_density_ac     <- get_k_shortest_paths(graph = g, from = alcarras, to = castelldans, weight = 'density', k = 10, show_weight = TRUE)
@@ -202,6 +238,19 @@ gw10 = filter_graph(graph=g, filter=10, weight='W(l_i)')
 vs_w10 = rate_paths(graph = gw10, from = vilanova, to = soses)
 ac_w10 = rate_paths(graph = gw10, from = alcarras, to = castelldans)
 
+# #-------------------------------------------------------20%------------------------------------------------------------
+
+gdi20 = filter_graph(graph=g, filter=20, weight='distance')
+vs_di20 = rate_paths(graph = gdi20, from = vilanova, to = soses)
+ac_di20 = rate_paths(graph = gdi20, from = alcarras, to = castelldans)
+
+gde20 = filter_graph(graph=g, filter=20, weight='density')
+vs_de20 = rate_paths(graph = gde20, from = vilanova, to = soses)
+ac_de20 = rate_paths(graph = gde20, from = alcarras, to = castelldans)
+
+gw20 = filter_graph(graph=g, filter=20, weight='W(l_i)')
+vs_w20 = rate_paths(graph = gw20, from = vilanova, to = soses)
+ac_w20 = rate_paths(graph = gw20, from = alcarras, to = castelldans)
 
 # #-------------------------------------------------------25%------------------------------------------------------------
 
@@ -217,6 +266,21 @@ gw25 = filter_graph(graph=g, filter=25, weight='W(l_i)')
 vs_w25 = rate_paths(graph = gw25, from = vilanova, to = soses)
 ac_w25 = rate_paths(graph = gw25, from = alcarras, to = castelldans)
 
+# #-------------------------------------------------------40%------------------------------------------------------------
+
+gdi40 = filter_graph(graph=g, filter=40, weight='distance')
+vs_di40 = rate_paths(graph = gdi40, from = vilanova, to = soses)
+ac_di40 = rate_paths(graph = gdi40, from = alcarras, to = castelldans)
+
+gde40 = filter_graph(graph=g, filter=40, weight='density')
+vs_de40 = rate_paths(graph = gde40, from = vilanova, to = soses)
+ac_de40 = rate_paths(graph = gde40, from = alcarras, to = castelldans)
+
+gw40 = filter_graph(graph=g, filter=40, weight='W(l_i)')
+vs_w40 = rate_paths(graph = gw40, from = vilanova, to = soses)
+ac_w40 = rate_paths(graph = gw40, from = alcarras, to = castelldans)
+
+
 # #-------------------------------------------------------50%------------------------------------------------------------
 
 gdi50 = filter_graph(graph=g, filter=50, weight='distance')
@@ -230,6 +294,22 @@ ac_de50 = rate_paths(graph = gde50, from = alcarras, to = castelldans)
 gw50 = filter_graph(graph=g, filter=50, weight='W(l_i)')
 vs_w50 = rate_paths(graph = gw50, from = vilanova, to = soses)
 ac_w50 = rate_paths(graph = gw50, from = alcarras, to = castelldans)
+
+# #-------------------------------------------------------60%------------------------------------------------------------
+
+gdi60 = filter_graph(graph=g, filter=60, weight='distance')
+vs_di60 = rate_paths(graph = gdi60, from = vilanova, to = soses)
+ac_di60 = rate_paths(graph = gdi60, from = alcarras, to = castelldans)
+
+gde60 = filter_graph(graph=g, filter=60, weight='density')
+vs_de60 = rate_paths(graph = gde60, from = vilanova, to = soses)
+ac_de60 = rate_paths(graph = gde60, from = alcarras, to = castelldans)
+
+gw60 = filter_graph(graph=g, filter=60, weight='W(l_i)')
+vs_w60 = rate_paths(graph = gw60, from = vilanova, to = soses)
+ac_w60 = rate_paths(graph = gw60, from = alcarras, to = castelldans)
+
+
 # #-------------------------------------------------------75%------------------------------------------------------------
 
 gdi75 = filter_graph(graph=g, filter=75, weight='distance')
@@ -243,3 +323,18 @@ ac_de75 = rate_paths(graph = gde75, from = alcarras, to = castelldans)
 gw75 = filter_graph(graph=g, filter=75, weight='W(l_i)')
 vs_w75 = rate_paths(graph = gw75, from = vilanova, to = soses)
 ac_w75 = rate_paths(graph = gw75, from = alcarras, to = castelldans)
+
+
+# #-------------------------------------------------------80%------------------------------------------------------------
+
+gdi80 = filter_graph(graph=g, filter=80, weight='distance')
+vs_di80 = rate_paths(graph = gdi80, from = vilanova, to = soses)
+ac_di80 = rate_paths(graph = gdi80, from = alcarras, to = castelldans)
+
+gde80 = filter_graph(graph=g, filter=80, weight='density')
+vs_de80 = rate_paths(graph = gde80, from = vilanova, to = soses)
+ac_de80 = rate_paths(graph = gde80, from = alcarras, to = castelldans)
+
+gw80 = filter_graph(graph=g, filter=80, weight='W(l_i)')
+vs_w80 = rate_paths(graph = gw80, from = vilanova, to = soses)
+ac_w80 = rate_paths(graph = gw80, from = alcarras, to = castelldans)
