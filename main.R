@@ -198,6 +198,10 @@ gde10 = filter_graph(graph=g, filter=10, weight='density')
 vs_de10 = rate_paths(graph = gde10, from = vilanova, to = soses)
 ac_de10 = rate_paths(graph = gde10, from = alcarras, to = castelldans)
 
+gdw10 = filter_graph(graph=g, filter=10, weight='W(l_i')
+vs_w10 = rate_paths(graph = gw10, from = vilanova, to = soses)
+ac_w10 = rate_paths(graph = gw10, from = alcarras, to = castelldans)
+
 
 # #-------------------------------------------------------25%------------------------------------------------------------
 
@@ -209,6 +213,9 @@ gde25 = filter_graph(graph=g, filter=25, weight='density')
 vs_de25 = rate_paths(graph = gde25, from = vilanova, to = soses)
 ac_de25 = rate_paths(graph = gde25, from = alcarras, to = castelldans)
 
+gdw25 = filter_graph(graph=g, filter=25, weight='W(l_i')
+vs_w25 = rate_paths(graph = gw25, from = vilanova, to = soses)
+ac_w25 = rate_paths(graph = gw25, from = alcarras, to = castelldans)
 
 # #-------------------------------------------------------50%------------------------------------------------------------
 
@@ -220,7 +227,9 @@ gde50 = filter_graph(graph=g, filter=50, weight='density')
 vs_de50 = rate_paths(graph = gde50, from = vilanova, to = soses)
 ac_de50 = rate_paths(graph = gde50, from = alcarras, to = castelldans)
 
-
+gdw50 = filter_graph(graph=g, filter=50, weight='W(l_i')
+vs_w50 = rate_paths(graph = gw50, from = vilanova, to = soses)
+ac_w50 = rate_paths(graph = gw50, from = alcarras, to = castelldans)
 # #-------------------------------------------------------75%------------------------------------------------------------
 
 gdi75 = filter_graph(graph=g, filter=75, weight='distance')
@@ -230,3 +239,7 @@ ac_di75 = rate_paths(graph = gdi75, from = alcarras, to = castelldans)
 gde75 = filter_graph(graph=g, filter=75, weight='density')
 vs_de75 = rate_paths(graph = gde75, from = vilanova, to = soses)
 ac_de75 = rate_paths(graph = gde75, from = alcarras, to = castelldans)
+
+gdw75 = filter_graph(graph=g, filter=75, weight='W(l_i')
+vs_w75 = rate_paths(graph = gw75, from = vilanova, to = soses)
+ac_w75 = rate_paths(graph = gw75, from = alcarras, to = castelldans)
