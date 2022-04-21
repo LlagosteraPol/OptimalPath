@@ -361,3 +361,15 @@ ac_de80 = rate_paths(graph = gde80, from = alcarras, to = castelldans)
 gw80 = filter_graph(graph=g, filter=80, weight='W(l_i)')
 vs_w80 = rate_paths(graph = gw80, from = vilanova, to = soses)
 ac_w80 = rate_paths(graph = gw80, from = alcarras, to = castelldans)
+
+# Get the maximum W(l_i) from all possible paths between Vilanova and Soses
+max_wli <- 0
+for(path in all_paths_vs){
+  tmp <- max(igraph::edge_attr(g, 'W(l_i)', index = path))
+  
+  if(tmp > max_wli) max_wli <- tmp
+}
+
+
+
+
