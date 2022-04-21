@@ -188,12 +188,12 @@ paths_info <- function(graph, from, to){
   for (path in all_paths){
     
     tmp_lst <- list(from = from, to=to)
-    tmp_lst <- c(tmp_lst, path = as.numeric(unlist(as_ids(path))))
+    tmp_lst <- c(tmp_lst, path = list(as.numeric(unlist(as_ids(path)))))
     
     for(attribute in igraph::edge_attr_names(graph)){
       tmp_lst[[attribute]] <- sum( igraph::edge_attr( graph, attribute,  igraph::E( graph, path = unlist(path) ) ))
     }
-    paths[[length(ipaths)+1]] <- tmp_lst
+    ipaths[[length(ipaths)+1]] <- tmp_lst
   }
   return(ipaths)
 }
@@ -215,44 +215,15 @@ rate_paths <- function(graph, from, to){
   }
   attr_names <- names(ipaths[[1]])
   
-  for(i in 4:length(attr_names)){
-    ipaths <- ipaths[order(sapply(ipaths,'[[',i))]
-    for(i in 1:length(ipaths)){
-      #ipaths[[i]] <- append(ipaths[[i]], list(n_distance=i))
-      ipaths[[i]][[attr_names[i]]] <- i
+  for(name_idx in 4:length(attr_names)){
+    if(name_idx != 'id'){
+      ipaths <- ipaths[order(sapply(ipaths,'[[',name_idx))]
+      for(i in 1:length(ipaths)){
+        #ipaths[[i]] <- append(ipaths[[i]], list(n_distance=i))
+        ipaths[[i]][[paste0('n_', attr_names[name_idx])]] <- i
+      }
     }
   }
-  # # distance order
-  # ipaths <- ipaths[order(sapply(ipaths,'[[',4))]
-  # for(i in 1:length(ipaths)){
-  #   #ipaths[[i]] <- append(ipaths[[i]], list(n_distance=i))
-  #   ipaths[[i]] <- c(ipaths[[i]], n_distance=i)
-  # }
-  # 
-  # #accident intensity order
-  # ipaths <- ipaths[order(sapply(ipaths,'[[',5))]
-  # for(i in 1:length(ipaths)){
-  #   ipaths[[i]] <- c(ipaths[[i]], n_weight=i)
-  # }
-  # 
-  # #transformed distance order
-  # ipaths <- ipaths[order(sapply(ipaths,'[[',6))]
-  # for(i in 1:length(ipaths)){
-  #   ipaths[[i]] <- c(ipaths[[i]], n_t_distance=i)
-  # }
-  # 
-  # #transformed accident intensity order
-  # ipaths <- ipaths[order(sapply(ipaths,'[[',7))]
-  # for(i in 1:length(ipaths)){
-  #   ipaths[[i]] <- c(ipaths[[i]], n_t_weight=i)
-  # }
-  # 
-  # #both transformed accident + distance with ponderation order
-  # ipaths <- ipaths[order(sapply(ipaths,'[[',8))]
-  # for(i in 1:length(ipaths)){
-  #   ipaths[[i]] <- c(ipaths[[i]], n_t_all=i)
-  # }
-  
   return(ipaths)
 }
 
