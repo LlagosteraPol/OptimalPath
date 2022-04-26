@@ -18,6 +18,32 @@ alcarras = 266
 castelldans = 91
 
 
+# Heatmaps
+load(file="DB/RData/Linear_pixel_final_18_Juny_2021_ultima_copia.RData")
+ww_df <- as.data.frame(ww)
+
+difusor_heatmap <- ggplot2::ggplot(ww_df, ggplot2::aes_string(x = 'xc', y = 'yc')) +
+                    viridis::scale_color_viridis(option = 'H') +
+                    ggplot2::labs(title = NULL,color = ww_df$values) +
+                    ggplot2::geom_point(shape = 15, size = 0.5,
+                                        ggplot2::aes(color = values) )+
+                    ggplot2::scale_y_continuous(name = NULL, 
+                                                limits = c(4587700, 4627450),
+                                                breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
+                                                labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
+                    ggplot2::scale_x_continuous(name = NULL,
+                                                limits = c(278950, 318500),
+                                                breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
+                                                labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
+                    ggplot2::theme_bw() +
+                    ggplot2::theme(legend.title = ggplot2::element_text(face = "bold"),
+                                   plot.title = ggplot2::element_text( size = 14,
+                                                                       face = "bold",
+                                                                       hjust = 0.5) )+
+                    ggplot2::coord_fixed() +
+                    ggplot2::theme(legend.title = ggplot2::element_blank())
+
+
 g = PrepareIgraph(net_data = net_data, 
                   node_data = node_data, 
                   cov1 = 'intensity', 
@@ -29,48 +55,75 @@ g = PrepareIgraph(net_data = net_data,
 
 g_df <- as.data.frame(igraph::as_data_frame(g))
 
+net_plot <- PlotNetwork(g) + 
+            ggplot2::geom_point(shape = 19, 
+                                size = 0.7,
+                                colour="black") +
+            ggplot2::coord_fixed() + 
+            ggplot2::scale_y_continuous(name = NULL, 
+                                        limits = c(4587700, 4627450),
+                                        breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
+                                        labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
+            ggplot2::scale_x_continuous(name = NULL,
+                                        limits = c(278950, 318500),
+                                        breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
+                                        labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
+            ggplot2::theme(panel.grid.major = ggplot2::element_blank(), 
+                    panel.grid.minor = ggplot2::element_blank())
 
-# Heatmaps
-load(file="DB/RData/Linear_pixel_final_18_Juny_2021_ultima_copia.RData")
-ww_df <- as.data.frame(ww)
-
-difusor_heatmap <- ggplot2::ggplot(ww_df, ggplot2::aes_string(x = 'xc', y = 'yc')) +
-                    viridis::scale_color_viridis(option = 'H') +
-                    ggplot2::labs(title = NULL,color = ww_df$values) +
-                    ggplot2::geom_point(shape = 15, size = 0.5,
-                                        ggplot2::aes(color = values) )+
-                    ggplot2::scale_y_continuous(name = NULL) + 
-                    ggplot2::scale_x_continuous(name = NULL) +
-                    ggplot2::theme_bw() +
-                    ggplot2::theme(legend.title = ggplot2::element_text(face = "bold"),
-                                   plot.title = ggplot2::element_text( size = 14,
-                                                                       face = "bold",
-                                                                       hjust = 0.5) )+
-                    ggplot2::coord_fixed() +
-                    ggplot2::theme(legend.title = ggplot2::element_blank())
+pdf(paste0("Images/plain_network.pdf"),height=6,width=13.5)
+net_plot
+dev.off()
 
 intensity_heatmap <- PlotNetwork(g, mode = 'intensity') + 
+                     ggplot2::geom_point(shape = 19, 
+                                         size = 0.7,
+                                         colour="gray") +
                      ggplot2::coord_fixed() + 
-                     ggplot2::scale_y_continuous(name = NULL) + 
-                     ggplot2::scale_x_continuous(name = NULL) +
-                     ggplot2::labs(title = NULL, color = weight) +
+                     ggplot2::scale_y_continuous(name = NULL, 
+                                                 limits = c(4587700, 4627450),
+                                                 breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
+                                                 labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
+                     ggplot2::scale_x_continuous(name = NULL,
+                                                 limits = c(278950, 318500),
+                                                 breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
+                                                 labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
+                     ggplot2::labs(title = NULL, color = 'intensity') +
                      ggplot2::theme(legend.title = ggplot2::element_blank())
 
 density_heatmap <- PlotNetwork(g, mode = 'density') + 
+                   ggplot2::geom_point(shape = 19, 
+                                       size = 0.7,
+                                       colour="gray") +
                      ggplot2::coord_fixed() + 
-                     ggplot2::scale_y_continuous(name = NULL) + 
-                     ggplot2::scale_x_continuous(name = NULL) +
-                     ggplot2::labs(title = NULL, color = weight) +
+                     ggplot2::scale_y_continuous(name = NULL, 
+                                                 limits = c(4587700, 4627450),
+                                                 breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
+                                                 labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
+                     ggplot2::scale_x_continuous(name = NULL,
+                                                 limits = c(278950, 318500),
+                                                 breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
+                                                 labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
+                     ggplot2::labs(title = NULL, color = 'density') +
                      ggplot2::theme(legend.title = ggplot2::element_blank()) + 
                      ggplot2::geom_point(shape = 19,
                                         size = 0.6,
                                         colour="gray")
 
 wli_heatmap <- PlotNetwork(g, mode = 'W(l_i)') + 
+               ggplot2::geom_point(shape = 19, 
+                                   size = 0.3,
+                                   colour="gray") +
                  ggplot2::coord_fixed() + 
-                 ggplot2::scale_y_continuous(name = NULL) + 
-                 ggplot2::scale_x_continuous(name = NULL) +
-                 ggplot2::labs(title = NULL, color = weight) +
+                 ggplot2::scale_y_continuous(name = NULL, 
+                                             limits = c(4587700, 4627450),
+                                             breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
+                                             labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
+                 ggplot2::scale_x_continuous(name = NULL,
+                                             limits = c(278950, 318500),
+                                             breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
+                                             labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
+                 ggplot2::labs(title = NULL, color = 'W(l_i)') +
                  ggplot2::theme(legend.title = ggplot2::element_blank())
 
 ggplot2::ggsave(

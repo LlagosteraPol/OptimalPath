@@ -27,7 +27,6 @@ PrepareIgraph <- function(net_data, node_data, cov1, cov2, prop = 0.5, invert_co
     net_data <- cbind( id, net_data)
   }
   
-  
   transformed_weights <- weighted_data(cov1 = net_data[, cov1], 
                                        cov2 = net_data[, cov2], 
                                        a = prop, 
@@ -42,10 +41,13 @@ PrepareIgraph <- function(net_data, node_data, cov1, cov2, prop = 0.5, invert_co
   weighted_segments <- cbind(weighted_segments, transformed_cov2) 
   weighted_segments <- cbind(weighted_segments, transformed_cov1 + transformed_cov2) 
   
+  
   colnames(weighted_segments) <- c(colnames(net_data), 
                                    paste0("T(", cov1, ")"), 
                                    paste0("T(", cov2, ")"),
                                    paste0("W(l_i)"))
+  
+  colnames(node_data)[2:3] <- c('xcoord', 'ycoord')
   
   weighted_segments$id <- rep(1:nrow(weighted_segments))
   
