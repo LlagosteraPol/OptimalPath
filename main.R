@@ -70,7 +70,7 @@ net_plot <- PlotNetwork(g) +
                                         labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
             ggplot2::theme(panel.grid.major = ggplot2::element_blank(), 
                            panel.grid.minor = ggplot2::element_blank(),
-                           axis.text = ggplot2::element_text(size=30))
+                           axis.text = ggplot2::element_text(size=20))
 
 pdf(paste0("Images/plain_network.pdf"),height=6,width=13.5)
 net_plot
