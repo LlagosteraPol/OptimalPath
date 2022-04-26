@@ -69,7 +69,8 @@ net_plot <- PlotNetwork(g) +
                                         breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
                                         labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
             ggplot2::theme(panel.grid.major = ggplot2::element_blank(), 
-                    panel.grid.minor = ggplot2::element_blank())
+                           panel.grid.minor = ggplot2::element_blank(),
+                           axis.text = ggplot2::element_text(size=30))
 
 pdf(paste0("Images/plain_network.pdf"),height=6,width=13.5)
 net_plot
@@ -194,59 +195,67 @@ edges_selection_ac <- as.character(short_path_ac$epath[[1]])
 
 plot_safest_vs <- PlotNetwork(g, net_vertices = nodes_selection_w_vs, net_edges = edges_selection_w_vs) + 
                     ggplot2::coord_fixed() + 
-                    ggplot2::scale_y_continuous(name = NULL) + 
-                    ggplot2::scale_x_continuous(name = NULL) +
-                    ggplot2::theme(
-                      axis.title.x = ggplot2::element_blank(),
-                      axis.text.x  = ggplot2::element_blank(),
-                      axis.ticks.x = ggplot2::element_blank(),
-                      axis.title.y = ggplot2::element_blank(),
-                      axis.text.y  = ggplot2::element_blank(),
-                      axis.ticks.y = ggplot2::element_blank(),
-                      panel.grid.major = ggplot2::element_blank(), 
-                      panel.grid.minor = ggplot2::element_blank())
+                    ggplot2::scale_y_continuous(name = NULL, 
+                                                limits = c(4587700, 4627450),
+                                                breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
+                                                labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
+                    ggplot2::scale_x_continuous(name = NULL,
+                                                limits = c(278950, 318500),
+                                                breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
+                                                labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
+                                      ggplot2::theme(
+                                        axis.title.x = ggplot2::element_blank(),
+                                        axis.title.y = ggplot2::element_blank(),
+                                        panel.grid.major = ggplot2::element_blank(), 
+                                        panel.grid.minor = ggplot2::element_blank())
 
 
 plot_shortest_vs <- PlotNetwork(g, net_vertices = nodes_selection_vs, net_edges = edges_selection_vs) + 
                       ggplot2::coord_fixed() + 
-                      ggplot2::scale_y_continuous(name = NULL) + 
-                      ggplot2::scale_x_continuous(name = NULL) +
+                      ggplot2::scale_y_continuous(name = NULL, 
+                                                  limits = c(4587700, 4627450),
+                                                  breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
+                                                  labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
+                      ggplot2::scale_x_continuous(name = NULL,
+                                                  limits = c(278950, 318500),
+                                                  breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
+                                                  labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
                       ggplot2::theme(
                         axis.title.x = ggplot2::element_blank(),
-                        axis.text.x  = ggplot2::element_blank(),
-                        axis.ticks.x = ggplot2::element_blank(),
                         axis.title.y = ggplot2::element_blank(),
-                        axis.text.y  = ggplot2::element_blank(),
-                        axis.ticks.y = ggplot2::element_blank(),
                         panel.grid.major = ggplot2::element_blank(), 
                         panel.grid.minor = ggplot2::element_blank())
 
 
 plot_safest_ac <- PlotNetwork(g, net_vertices = nodes_selection_w_ac, net_edges = edges_selection_w_ac) + 
                     ggplot2::coord_fixed() + 
-                    ggplot2::scale_y_continuous(name = NULL) + 
-                    ggplot2::scale_x_continuous(name = NULL) +
+                    ggplot2::scale_y_continuous(name = NULL, 
+                                                limits = c(4587700, 4627450),
+                                                breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
+                                                labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
+                    ggplot2::scale_x_continuous(name = NULL,
+                                                limits = c(278950, 318500),
+                                                breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
+                                                labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
                     ggplot2::theme(
                       axis.title.x = ggplot2::element_blank(),
-                      axis.text.x  = ggplot2::element_blank(),
-                      axis.ticks.x = ggplot2::element_blank(),
                       axis.title.y = ggplot2::element_blank(),
-                      axis.text.y  = ggplot2::element_blank(),
-                      axis.ticks.y = ggplot2::element_blank(),
                       panel.grid.major = ggplot2::element_blank(), 
                       panel.grid.minor = ggplot2::element_blank())
 
 plot_shortest_ac <- PlotNetwork(g, net_vertices = nodes_selection_ac, net_edges = edges_selection_ac) + 
                       ggplot2::coord_fixed() + 
-                      ggplot2::scale_y_continuous(name = NULL) + 
-                      ggplot2::scale_x_continuous(name = NULL) +
+                      ggplot2::scale_y_continuous(name = NULL, 
+                                                  limits = c(4587700, 4627450),
+                                                  breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
+                                                  labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
+                      ggplot2::scale_x_continuous(name = NULL,
+                                                  limits = c(278950, 318500),
+                                                  breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
+                                                  labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
                       ggplot2::theme(
                         axis.title.x = ggplot2::element_blank(),
-                        axis.text.x  = ggplot2::element_blank(),
-                        axis.ticks.x = ggplot2::element_blank(),
                         axis.title.y = ggplot2::element_blank(),
-                        axis.text.y  = ggplot2::element_blank(),
-                        axis.ticks.y = ggplot2::element_blank(),
                         panel.grid.major = ggplot2::element_blank(), 
                         panel.grid.minor = ggplot2::element_blank())
 
