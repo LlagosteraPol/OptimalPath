@@ -9,6 +9,87 @@ library(parallel)
 #' Creates a network model in igraph class where the edge and node attributes contain information.
 #' 
 #' @name PrepareIgraph
+#' @param node_data two columns dataframe with the Id of the nodes and its x and y coordinates
+#' @param edge_endpoints two columns dataframe with the start (from) and ending (to) nodes for each edge
+#' @param edge_data dataframe with the information of the edges
+#' @param props list of proportions for the covariance linear combination formula W(l_i). 
+#' NULL by default (equal proportion will be set)
+#' @param inverts list of boolean values (TRUE/FALSE) to specify if some covariate must be inverted (max(cov) - cov_i).
+#' An inverted covariate means that the lowest values are treated as more significate (more weighted). NULL by default, 
+#' if NULL all booleans are set to FALSE.
+#' @return igraph network class object
+#' 
+PrepareIgraph <- function(node_data, edge_endpoints, edge_data, props = NULL, inverts = NULL){
+  
+  # If the edge_endpoints misses the edge Id's, add them
+  if(length(edge_endpoints) > 1 && length(edge_endpoints) < 3){
+    id <-  rep(1:nrow(edge_endpoints))
+    edge_endpoints <- cbind(edge_endpoints, id)
+  }
+  
+  transformed_weights <- weighted_data(covs = edge_data, 
+                                       props = props, 
+                                       inverts = inverts)
+  
+  weighted_segments <- cbind(edge_endpoints, edge_data, transformed_weights)
+
+  colnames(node_data)[2:3] <- c('xcoord', 'ycoord')
+  
+  return(graph_from_data_frame(weighted_segments, directed = FALSE, vertices = node_data))
+}
+
+
+#' Calculates the linear combination between two covariates (based on formula W(l_i))
+#' 
+#' @name weighted_data
+#' @param covs dataframe holding the data of covariates in each column (each column holds a different covariate type)
+#' @param props list of proportions for the covariance linear combination formula W(l_i). 
+#' NULL by default (equal proportion will be set)
+#' @param inverts list of boolean values (TRUE/FALSE) to specify if some covariate must be inverted (max(cov) - cov_i).
+#' An inverted covariate means that the lowest values are treated as more significate (more weighted). NULL by default, 
+#' if NULL all booleans are set to FALSE.
+#' @return list with weighted cov1 and cov2
+#' 
+weighted_data <- function(covs, props = NULL, inverts = NULL){
+  if(sum(props) > 1) stop('Bad proportion Error: The sum of all proportions cannot exceed 1')
+  
+  results <- c()
+  
+  if(is.null(props)){
+    props <- rep(ncol(covs), 1/ncol(covs))
+  } 
+  
+  sum_weights <- rep(0, nrow(covs))
+  for(idx in 1:ncol(covs)){
+    if(is.na(props[idx])) prop <- 0 else prop <- props[idx]
+    
+    cov <- covs[idx]
+    
+    if(!is.null(inverts) && inverts[idx]) cov <- mapply(FUN = `-`, max(cov), cov)
+    
+    transformed_cov <- mapply(FUN = `-`, cov, min(cov))
+    
+    transformed_cov <- mapply(FUN = `/`, transformed_cov, (max(cov)-min(cov)))
+    
+    transformed_cov <- mapply(FUN = `*`, transformed_cov, prop)
+    
+    results <- cbind(results, transformed_cov)
+    colnames(results) <- c(colnames(results)[1:ncol(results)-1],
+                           paste0("T(", colnames(covs)[idx], ")"))
+    
+    sum_weights <- sum_weights + transformed_cov
+  }
+  
+  results <- cbind(results, sum_weights) 
+  colnames(results) <- c(colnames(results)[1:ncol(results)-1], paste0("W(l_i)"))
+  
+  results
+}
+
+
+#' Creates a network model in igraph class where the edge and node attributes contain information.
+#' 
+#' @name PrepareIgraph_old
 #' @param net_data dataframe with columns from, to, distance, covariate1 and covariate2 in this order but the names can be different.
 #' @param node_data two columns dataframe with the Id of the nodes and its x and y coordinates.
 #' @param cov1 select first covariant to calculate the linear combination W(l_i)
@@ -18,7 +99,7 @@ library(parallel)
 #' @param invert_cov2 invert covariate 2 (max(cov2) - cov2_i), default FALSE
 #' @return igraph network class object
 #' 
-PrepareIgraph <- function(net_data, node_data, cov1, cov2, prop = 0.5, invert_cov1 = FALSE, invert_cov2 = FALSE){
+PrepareIgraph_old <- function(net_data, node_data, cov1, cov2, prop = 0.5, invert_cov1 = FALSE, invert_cov2 = FALSE){
   
   if(prop > 1 || prop < 0) stop('Bad proportion Error: Proportion needs to be in the range [0, 1].')
   
@@ -57,7 +138,7 @@ PrepareIgraph <- function(net_data, node_data, cov1, cov2, prop = 0.5, invert_co
 
 #' Calculates the linear combination between two covariates (based on formula W(l_i))
 #' 
-#' @name weighted_data
+#' @name weighted_data_old
 #' @param cov1 vector containing the first covariate data
 #' @param cov2 vector containing the second covariate data
 #' @param a weighting for cov1 (a+b=1)
@@ -66,7 +147,7 @@ PrepareIgraph <- function(net_data, node_data, cov1, cov2, prop = 0.5, invert_co
 #' @param invert_cov2 invert covariate 2 (max(cov2) - cov2_i), default FALSE
 #' @return list with weighted cov1 and cov2
 #' 
-weighted_data <- function(cov1, cov2, a, b, invert_cov1 = FALSE, invert_cov2 = FALSE){
+weighted_data_old <- function(cov1, cov2, a, b, invert_cov1 = FALSE, invert_cov2 = FALSE){
   
   if(invert_cov1) cov1 <- mapply(FUN = `-`, max(cov1), cov1)
   if(invert_cov2) cov2 <- mapply(FUN = `-`, max(cov2), cov2)
@@ -539,7 +620,7 @@ PlotNetwork <- function(g, net_vertices = NULL, net_edges = NULL, mode = 'none',
                               size = 0.8, 
                               colour = "grey") +
         ggplot2::geom_point(shape = 19, 
-                            size = 1.7) +
+                            size = 0.5) +
         ggplot2::scale_y_continuous(name = "y-coordinate") + 
         ggplot2::scale_x_continuous(name = "x-coordinate") + 
         ggplot2::theme_bw()
@@ -562,11 +643,11 @@ PlotNetwork <- function(g, net_vertices = NULL, net_edges = NULL, mode = 'none',
                               size = 0.8 * high_size,
                               colour = 'green') +
         ggplot2::geom_point(shape = 19, 
-                            size = 1.7,
+                            size = 0.5,
                             colour="gray") +
         ggplot2::geom_point(data = highlighted_df,
                             shape = 19,
-                            size = 1.7 * high_size,
+                            size = 0.5 * high_size,
                             colour = 'darkgreen',
                             ggplot2::aes_string(x = 'xcoord', y = 'ycoord')) +
         ggplot2::scale_y_continuous(name = "y-coordinate") + 
@@ -591,7 +672,7 @@ PlotNetwork <- function(g, net_vertices = NULL, net_edges = NULL, mode = 'none',
                               data = edges_df,
                               size = 0.8) +
         ggplot2::geom_point(shape = 19,
-                            size = 1.7,
+                            size = 0.5,
                             colour="gray") +
         ggplot2::scale_y_continuous(name = "y-coordinate") +
         ggplot2::scale_x_continuous(name = "x-coordinate") +
@@ -624,7 +705,7 @@ PlotNetwork <- function(g, net_vertices = NULL, net_edges = NULL, mode = 'none',
                               data = sub_edges_df,
                               size = 0.8) +
         ggplot2::geom_point(shape = 19,
-                            size = 1.7,
+                            size = 0.5,
                             colour="gray") +
         ggplot2::scale_y_continuous(name = "y-coordinate") +
         ggplot2::scale_x_continuous(name = "x-coordinate") +
