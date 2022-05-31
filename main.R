@@ -48,7 +48,7 @@ g = PrepareIgraph(node_data = node_data,
                   edge_endpoints = net_data[1:2],
                   edge_data = net_data[3:length(net_data)],
                   props = c(0, 0.25, 0.25, 0.25, 0.25), 
-                  inverts = c(FALSE, FALSE, TRUE, FALSE, FALSE))
+                  inverts = c(FALSE, FALSE, TRUE, FALSE, TRUE))
 
 
 g_df <- as.data.frame(igraph::as_data_frame(g))
