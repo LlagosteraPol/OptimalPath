@@ -5,8 +5,25 @@ library(shp2graph)
 
 # --------------Test shp2graph--------- 
 data(ORN)
-rtNEL1 <-readshpnw(ORN.nt)
-igr<-nel2igraph(rtNEL1[[2]],rtNEL1[[3]],weight=rtNEL1[[5]][[1]])
+rtNEL <- shp2graph::readshpnw(ORN.nt, ELComputed=TRUE)
+
+node_coords_orn <- rtNEL[[2]]
+edges_orn <- rtNEL[[3]]
+weights_orn <- rtNEL[[5]][[1]] 
+
+net_orn<-shp2graph::nel2igraph(nodelist = node_coords_orn,
+                               edgelist = edges_orn,
+                               weight = weights_orn)
+
+adj_mtx_orn <- as.matrix(igraph::as_adjacency_matrix(net_orn))
+
+intnet_orn <- intensitynet::intensitynet(adjacency_mtx = adj_mtx_orn, 
+                                         node_coords = shp2graph::Nodes.coordinates(node_coords_orn), 
+                                         event_data = matrix(ncol = 2))
+intensitynet::PlotHeatmap(intnet_orn)
+pdf("Images/ontario_example.pdf",height=6,width=6)
+intensitynet::PlotHeatmap(intnet_orn) + ggplot2::coord_fixed()
+dev.off()
 # -------------------------------------
 
 accidents_df <- read.csv(file = "DB/AccidentsAnimals_1014_CatPenins.csv", sep = ';')

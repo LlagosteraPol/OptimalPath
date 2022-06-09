@@ -1,4 +1,5 @@
 
+#PlotNetwork(g, high_size = 1, net_edges = igraph::E(g)[1], net_vertices = igraph::ends(g, E(g)[1])) #show edge in map
 
 imd <- rep(0, times = length(Dades_pesos[,1]))
 imd2 <- c(7052,
@@ -440,9 +441,3 @@ imd2 <- c(7052,
           36909 #437
 )
 
-net_data <- cbind(Dades_segments, Dades_distancies) 
-net_data <- cbind(net_data, Dades_pesos)
-net_data <- cbind(net_data, imd2)
-
-colnames(net_data) <- c("from","to","distance", "intensity", "imd2015")
-write.csv2(net_data, "DB/CSV/net_data.csv", row.names = FALSE)

@@ -44,13 +44,11 @@ difusor_heatmap <- ggplot2::ggplot(ww_df, ggplot2::aes_string(x = 'xc', y = 'yc'
                     ggplot2::theme(legend.title = ggplot2::element_blank())
 
 
-g = PrepareIgraph(net_data = net_data, 
-                  node_data = node_data, 
-                  cov1 = 'intensity', 
-                  cov2 = 'density', 
-                  prop = 0.5, 
-                  invert_cov1 = FALSE, 
-                  invert_cov2 = TRUE)
+g = PrepareIgraph(node_data = node_data, 
+                  edge_endpoints = net_data[1:2],
+                  edge_data = net_data[3:length(net_data)],
+                  props = c(0, 0.25, 0.25, 0.25, 0.25), 
+                  inverts = c(FALSE, FALSE, TRUE, FALSE, FALSE))
 
 
 g_df <- as.data.frame(igraph::as_data_frame(g))
@@ -92,6 +90,7 @@ intensity_heatmap <- PlotNetwork(g, mode = 'intensity') +
                      ggplot2::labs(title = NULL, color = 'intensity') +
                      ggplot2::theme(legend.title = ggplot2::element_blank())
 
+
 density_heatmap <- PlotNetwork(g, mode = 'density') + 
                    ggplot2::geom_point(shape = 19, 
                                        size = 0.7,
@@ -106,10 +105,43 @@ density_heatmap <- PlotNetwork(g, mode = 'density') +
                                                  breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
                                                  labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
                      ggplot2::labs(title = NULL, color = 'density') +
-                     ggplot2::theme(legend.title = ggplot2::element_blank()) + 
-                     ggplot2::geom_point(shape = 19,
-                                        size = 0.6,
-                                        colour="gray")
+                     ggplot2::theme(legend.title = ggplot2::element_blank())
+
+
+ndvi_heatmap <- PlotNetwork(g, mode = 'ndvi') + 
+  ggplot2::geom_point(shape = 19, 
+                      size = 0.7,
+                      colour="gray") +
+  ggplot2::coord_fixed() + 
+  ggplot2::scale_y_continuous(name = NULL, 
+                              limits = c(4587700, 4627450),
+                              breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
+                              labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
+  ggplot2::scale_x_continuous(name = NULL,
+                              limits = c(278950, 318500),
+                              breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
+                              labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
+  ggplot2::labs(title = NULL, color = 'density') +
+  ggplot2::theme(legend.title = ggplot2::element_blank())
+
+
+
+velocity_heatmap <- PlotNetwork(g, mode = 'velocity') + 
+  ggplot2::geom_point(shape = 19, 
+                      size = 0.7,
+                      colour="gray") +
+  ggplot2::coord_fixed() + 
+  ggplot2::scale_y_continuous(name = NULL, 
+                              limits = c(4587700, 4627450),
+                              breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
+                              labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
+  ggplot2::scale_x_continuous(name = NULL,
+                              limits = c(278950, 318500),
+                              breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
+                              labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
+  ggplot2::labs(title = NULL, color = 'density') +
+  ggplot2::theme(legend.title = ggplot2::element_blank())
+
 
 wli_heatmap <- PlotNetwork(g, mode = 'W(l_i)') + 
                ggplot2::geom_point(shape = 19, 
@@ -140,6 +172,17 @@ ggplot2::ggsave(
   filename = "Images/heatmaps_4_2.pdf", 
   plot = gridExtra::grid.arrange(difusor_heatmap, intensity_heatmap, density_heatmap, wli_heatmap, layout_matrix = rbind(c(1,2),c(3,4))), 
   width = 10, height = 7
+)
+
+ggplot2::ggsave(
+  filename = "Images/heatmaps_6.pdf",
+  plot = gridExtra::marrangeGrob(list(difusor_heatmap, density_heatmap, 
+                                      intensity_heatmap, ndvi_heatmap,
+                                      velocity_heatmap, wli_heatmap ),
+                                 nrow=3,
+                                 ncol=2,
+                                 top=NULL),
+  width = 7, height = 7
 )
 
 pdf(paste0("Images/intensity_heatmap.pdf"),height=6,width=13.5)
@@ -191,6 +234,7 @@ short_path_ac <- igraph::shortest_paths(graph = g,
 
 nodes_selection_ac <- as.character(short_path_ac$vpath[[1]])
 edges_selection_ac <- as.character(short_path_ac$epath[[1]])
+
 
 
 plot_safest_vs <- PlotNetwork(g, net_vertices = nodes_selection_w_vs, net_edges = edges_selection_w_vs) + 
@@ -258,7 +302,6 @@ plot_shortest_ac <- PlotNetwork(g, net_vertices = nodes_selection_ac, net_edges 
                         axis.title.y = ggplot2::element_blank(),
                         panel.grid.major = ggplot2::element_blank(), 
                         panel.grid.minor = ggplot2::element_blank())
-
 ggplot2::ggsave(
   filename = "Images/shortest_paths.pdf", 
   plot = gridExtra::marrangeGrob(list(plot_safest_vs, plot_safest_ac, plot_shortest_vs, plot_shortest_ac), 
