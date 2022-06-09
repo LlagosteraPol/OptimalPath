@@ -620,7 +620,7 @@ PlotNetwork <- function(g, net_vertices = NULL, net_edges = NULL, mode = 'none',
                               size = 0.8, 
                               colour = "grey") +
         ggplot2::geom_point(shape = 19, 
-                            size = 0.5) +
+                            size = 0.3) +
         ggplot2::scale_y_continuous(name = "y-coordinate") + 
         ggplot2::scale_x_continuous(name = "x-coordinate") + 
         ggplot2::theme_bw()
@@ -643,11 +643,11 @@ PlotNetwork <- function(g, net_vertices = NULL, net_edges = NULL, mode = 'none',
                               size = 0.8 * high_size,
                               colour = 'green') +
         ggplot2::geom_point(shape = 19, 
-                            size = 0.5,
+                            size = 0.3,
                             colour="gray") +
         ggplot2::geom_point(data = highlighted_df,
                             shape = 19,
-                            size = 0.5 * high_size,
+                            size = 0.3 * high_size,
                             colour = 'darkgreen',
                             ggplot2::aes_string(x = 'xcoord', y = 'ycoord')) +
         ggplot2::scale_y_continuous(name = "y-coordinate") + 
@@ -672,7 +672,7 @@ PlotNetwork <- function(g, net_vertices = NULL, net_edges = NULL, mode = 'none',
                               data = edges_df,
                               size = 0.8) +
         ggplot2::geom_point(shape = 19,
-                            size = 0.5,
+                            size = 0.3,
                             colour="gray") +
         ggplot2::scale_y_continuous(name = "y-coordinate") +
         ggplot2::scale_x_continuous(name = "x-coordinate") +
@@ -705,7 +705,7 @@ PlotNetwork <- function(g, net_vertices = NULL, net_edges = NULL, mode = 'none',
                               data = sub_edges_df,
                               size = 0.8) +
         ggplot2::geom_point(shape = 19,
-                            size = 0.5,
+                            size = 0.3,
                             colour="gray") +
         ggplot2::scale_y_continuous(name = "y-coordinate") +
         ggplot2::scale_x_continuous(name = "x-coordinate") +

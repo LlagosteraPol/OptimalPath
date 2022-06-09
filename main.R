@@ -48,7 +48,7 @@ g = PrepareIgraph(node_data = node_data,
                   edge_endpoints = net_data[1:2],
                   edge_data = net_data[3:length(net_data)],
                   props = c(0, 0.25, 0.25, 0.25, 0.25), 
-                  inverts = c(FALSE, FALSE, TRUE, FALSE, TRUE))
+                  inverts = c(FALSE, FALSE, TRUE, FALSE, FALSE))
 
 
 g_df <- as.data.frame(igraph::as_data_frame(g))
@@ -302,7 +302,6 @@ plot_shortest_ac <- PlotNetwork(g, net_vertices = nodes_selection_ac, net_edges 
                         axis.title.y = ggplot2::element_blank(),
                         panel.grid.major = ggplot2::element_blank(), 
                         panel.grid.minor = ggplot2::element_blank())
-
 ggplot2::ggsave(
   filename = "Images/shortest_paths.pdf", 
   plot = gridExtra::marrangeGrob(list(plot_safest_vs, plot_safest_ac, plot_shortest_vs, plot_shortest_ac), 
