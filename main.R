@@ -60,17 +60,17 @@ net_plot <- PlotNetwork(g) +
                                 size = 0.7,
                                 colour="black") +
             ggplot2::coord_fixed() + 
-            ggplot2::scale_y_continuous(name = NULL, 
+            ggplot2::scale_y_continuous(name = 'Km', 
                                         limits = c(4587700, 4627450),
                                         breaks = c(4587700, 4595650, 4603600, 4611550, 4619500, 4627450),
                                         labels = c('4587700' = '100', '4595650' = '108', '4603600' = '116', '4611550' = '124', '4619500' = '132', '4627450' = '140')) + 
-            ggplot2::scale_x_continuous(name = NULL,
+            ggplot2::scale_x_continuous(name = 'Km',
                                         limits = c(278950, 318500),
                                         breaks = c(278950, 286860, 294770, 302680, 310590, 318500),
                                         labels = c('278950' = 18, '286860' = 26, '294770' = 34, '302680' = 42, '310590' = 50, '318500' = 58)) +
             ggplot2::theme(panel.grid.major = ggplot2::element_blank(), 
                            panel.grid.minor = ggplot2::element_blank(),
-                           axis.text = ggplot2::element_text(size=20))
+                           text = ggplot2::element_text(size=20))
 
 pdf(paste0("Images/plain_network.pdf"),height=6,width=13.5)
 net_plot
