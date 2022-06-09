@@ -467,8 +467,8 @@ filter_paths <- function(graph, from, to, weight, filters, paths = NULL){
 #' @return graph without the edges with weight equal or greater than the given filter
 #' 
 filter_graph <- function(graph, filter, weight){
-  max_distance  = max(igraph::edge_attr(g, weight))
-  return(delete.edges(graph, which(igraph::edge_attr(g, weight) >= (max_distance*(filter/100)))))  
+  max_distance  = max(igraph::edge_attr(graph, weight))
+  return(delete.edges(graph, which(igraph::edge_attr(graph, weight) >= (max_distance*(filter/100)))))  
 }
 
 
