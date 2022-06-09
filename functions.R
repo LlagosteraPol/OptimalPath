@@ -299,7 +299,7 @@ rate_paths <- function(graph, from, to){
   attr_names <- names(ipaths[[1]])
   
   for(name_idx in 4:length(attr_names)){
-    if(name_idx != 'id'){
+    if(attr_names[name_idx] != 'id'){
       ipaths <- ipaths[order(sapply(ipaths,'[[',name_idx))]
       for(i in 1:length(ipaths)){
         #ipaths[[i]] <- append(ipaths[[i]], list(n_distance=i))
