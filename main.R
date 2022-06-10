@@ -47,7 +47,7 @@ difusor_heatmap <- ggplot2::ggplot(ww_df, ggplot2::aes_string(x = 'xc', y = 'yc'
 g = PrepareIgraph(node_data = node_data, 
                   edge_endpoints = net_data[1:2],
                   edge_data = net_data[3:length(net_data)],
-                  props = c(0, 0.25, 0.25, 0.25, 0.25), 
+                  props = c(0.2, 0.2, 0.2, 0.2, 0.2), 
                   inverts = c(FALSE, FALSE, TRUE, FALSE, FALSE))
 
 
@@ -176,9 +176,8 @@ ggplot2::ggsave(
 
 ggplot2::ggsave(
   filename = "Images/heatmaps_6.pdf",
-  plot = gridExtra::marrangeGrob(list(difusor_heatmap, density_heatmap, 
-                                      intensity_heatmap, ndvi_heatmap,
-                                      velocity_heatmap, wli_heatmap ),
+  plot = gridExtra::marrangeGrob(list(difusor_heatmap, density_heatmap, velocity_heatmap, 
+                                      intensity_heatmap, ndvi_heatmap, wli_heatmap ),
                                  nrow=3,
                                  ncol=2,
                                  top=NULL),
